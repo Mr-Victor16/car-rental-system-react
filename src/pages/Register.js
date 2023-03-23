@@ -77,7 +77,7 @@ const Register = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                 
-                        <Button variant="contained" onClick={signUp}>Zarejestruj się</Button>
+                    <Button variant="contained" onClick={signUp}>Zarejestruj się</Button>
                     <Button variant="outlined" component={Link} to="../login">Masz już konto? Zaloguj się</Button>
                 </Stack>
                 </Box>    

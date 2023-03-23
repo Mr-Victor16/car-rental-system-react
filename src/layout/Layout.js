@@ -5,7 +5,7 @@ import { AppBar, Container } from '@mui/material';
 const Layout = () => {
     return (
         <>
-            <AppBar position='static'>
+            <AppBar position='static' >
                 <Container maxWidth="xl">
                     <Header />
                 </Container>

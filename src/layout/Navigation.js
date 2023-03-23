@@ -10,14 +10,14 @@ const Navigation = () => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        const currentUser = AuthService.getCurrentUser();
+        const currentUser = JSON.parse(localStorage.getItem("user"));
         
         if (currentUser) {
             setModerator(currentUser.roles.includes("ROLE_MODERATOR"));
             setAdmin(currentUser.roles.includes("ROLE_ADMIN"));
             setUser(currentUser);
         }
-    }, []);
+    }, [JSON.parse(localStorage.getItem("user"))] );
 
     const logOut = () => {
         AuthService.logout();
@@ -35,7 +35,7 @@ const Navigation = () => {
                 <Button
                     component={Link}
                     sx={{ my: 2, color: 'white', display: 'block' }}
-                    to="profile"
+                    to="home"
                 >
                     Home
                 </Button>
