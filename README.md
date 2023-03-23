@@ -1,15 +1,11 @@
-# Getting Started with Create React App
+# Car rental system [Frontend]
+Frontend do projektu: [car-rental-system-spring](https://github.com/Mr-Victor16/car-rental-system-spring)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Obecnie zaimplementowane funkcjonalności:
+- Zwracanie wszystkich dostępnych do wynajęcia aut
+![img.png](img.png)
 
-## Available Scripts
+- Logowanie, rejestracja, prosty podgląd profilu, wylogowywanie
+- ![img_1.png](img_1.png)
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Repozytorium w ciągłym rozwoju
