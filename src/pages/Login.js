@@ -19,8 +19,7 @@ const Login = () => {
                 localStorage.setItem("user", JSON.stringify(response.data));
             }
 
-            //return response.data;
-            navigate('/contact', { replace: true });
+            navigate('/', { replace: true });
         })
         .catch((error) => {
             setError(error);

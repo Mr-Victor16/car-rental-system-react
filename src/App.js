@@ -6,6 +6,7 @@ import NoPage from "./pages/NoPage";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import AddCar from "./pages/AddCar";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path='register' element={<Register />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="car/add" element={<AddCar />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

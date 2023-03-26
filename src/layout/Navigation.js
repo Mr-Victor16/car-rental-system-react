@@ -15,7 +15,7 @@ const Navigation = () => {
             setAdmin(currentUser.roles.includes("ROLE_ADMIN"));
             setUser(currentUser);
         }
-    }, [JSON.parse(localStorage.getItem("user"))] );
+    }, []);
 
     const logOut = () => {
         AuthService.logout();
@@ -56,6 +56,20 @@ const Navigation = () => {
                             to="register"
                         >
                             Zarejestruj się
+                        </Button>
+                    </Box>
+                </>
+            )}
+
+            {admin && (
+                <>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                        <Button
+                            component={Link}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            to="car/add"
+                        >
+                            Dodaj auto
                         </Button>
                     </Box>
                 </>

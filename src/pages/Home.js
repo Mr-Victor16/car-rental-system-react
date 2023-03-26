@@ -24,7 +24,6 @@ const Home = () => {
             .then((response) => {
                 setCars(response.data);
                 console.log(response.data);
-                return response.data;
             })
             .catch((error) => {
                 console.log(error);
