@@ -1,28 +1,15 @@
-import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
-import AuthService from '../services/AuthService';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from "../store/userDetailsReducer";
 
 const Navigation = () => {
-    const [ user, setUser ] = useState('');
-    const [ admin, setAdmin ] = useState(false);
     let navigate = useNavigate();
-
-    useEffect(() => {
-        const currentUser = JSON.parse(localStorage.getItem("user"));
-        
-        if (currentUser) {
-            setAdmin(currentUser.roles.includes("ROLE_ADMIN"));
-            setUser(currentUser);
-        }
-    }, []);
+    const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
 
     const logOut = () => {
-        AuthService.logout();
-
-        setAdmin(false);
-        setUser(undefined);
-        
+        dispatch(logout());
         navigate('/', { replace: true });
     };
 
@@ -38,7 +25,41 @@ const Navigation = () => {
                 </Button>
             </Box>
 
-            {!user && (
+            {userDetails.roles.includes("ROLE_ADMIN") && (
+                <>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                        <Button
+                            component={Link}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            to="car/add"
+                        >
+                            Dodaj auto
+                        </Button>
+                    </Box>
+                </>
+            )}
+
+            {(userDetails.roles.includes('ROLE_USER') || userDetails.roles.includes('ROLE_ADMIN')) ? (
+                <>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                        <Button
+                            component={Link}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            to="profile"
+                        >
+                            Profil
+                        </Button>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                        <Button
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            onClick={logOut}
+                        >
+                            Wyloguj się
+                        </Button>
+                    </Box>
+                </>
+            ) : (
                 <>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
                         <Button
@@ -56,42 +77,6 @@ const Navigation = () => {
                             to="register"
                         >
                             Zarejestruj się
-                        </Button>
-                    </Box>
-                </>
-            )}
-
-            {admin && (
-                <>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
-                        <Button
-                            component={Link}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                            to="car/add"
-                        >
-                            Dodaj auto
-                        </Button>
-                    </Box>
-                </>
-            )}
-
-            {user && (
-                <>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
-                        <Button
-                            component={Link}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                            to="profile"
-                        >
-                            Profil
-                        </Button>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
-                        <Button
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                            onClick={logOut}
-                        >
-                            Wyloguj się
                         </Button>
                     </Box>
                 </>

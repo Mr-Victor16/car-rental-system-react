@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Box, Button, Stack, Container, Alert, Fade } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -11,6 +12,13 @@ const Register = () => {
     const [open, setOpen] = React.useState(false);
     const [error, setError] = useState('');
     let navigate = useNavigate();
+    const userDetails = useSelector((state) => state.userDetails);
+
+    useEffect(() => {
+        if (userDetails.token !== "") {
+            navigate('/', {replace: true});
+        }
+    });
 
     const signUp = async () => {
         if(password === confirmPassword){
@@ -46,8 +54,8 @@ const Register = () => {
                 <Stack spacing={2}>
                     <Typography variant='h3' align='center'>Rejestracja</Typography>
 
-                    <Fade in={open} autoHideDuration={60000} onClose={handleClose}>
-                        <Alert severity="error" anim>{error}</Alert>
+                    <Fade in={open} autohideduration={60000} onClose={handleClose}>
+                        <Alert severity="error">{error}</Alert>
                     </Fade>
 
                     <TextField

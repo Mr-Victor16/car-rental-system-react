@@ -12,9 +12,11 @@ import {
     Paper
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
+import { useSelector } from "react-redux";
 const API_URL = "http://localhost:8080/api/cars";
 
 const Home = () => {
+    const userDetails = useSelector((state) => state.userDetails);
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
@@ -87,7 +89,7 @@ const Home = () => {
                                         </Stack>
                                     </CardContent>
                                     <CardActions style={{justifyContent: 'center'}}>
-                                        {JSON.parse(localStorage.getItem('user')) !== null && (<Button variant="contained">Wynajmij auto</Button>)}
+                                        {userDetails.token !== "" && (<Button variant="contained">Wynajmij auto</Button>)}
                                     </CardActions>
                                 </Card>
                             </Grid>

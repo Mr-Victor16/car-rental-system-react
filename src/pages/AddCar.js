@@ -2,17 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import {
-    TextField,
-    Typography,
-    Box,
-    Select,
-    Container,
-    FormGroup,
-    InputLabel,
-    Button,
-    Grid,
-    MenuItem, Alert, Fade
+    TextField, Typography, Box, Select, Container, FormGroup,
+    InputLabel, Button, Grid, MenuItem, Alert, Fade
 } from '@mui/material';
+import { useSelector } from "react-redux";
 const API_URL = "http://localhost:8080/api";
 
 const AddCar = () => {
@@ -35,30 +28,28 @@ const AddCar = () => {
     const [capacity, setCapacity] = useState("");
     const [fuelType, setFuelType] = useState(1);
 
-    useEffect(() => {
-        if(JSON.parse(localStorage.getItem("user")) !== null){
-            const user = JSON.parse(localStorage.getItem("user"));
+    const userDetails = useSelector((state) => state.userDetails);
 
-            if(user.roles.includes("ROLE_ADMIN")){
-                axios.get(API_URL + '/fuel/list', { method: 'GET',
-                    mode: 'cors'
+    useEffect(() => {
+        if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
+            axios.get(API_URL + '/fuel/list', { method: 'GET',
+                mode: 'cors'
+            })
+                .then((response) => {
+                    setFuelList(response.data);
+                    console.log(response.data);
                 })
-                    .then((response) => {
-                        setFuelList(response.data);
-                        console.log(response.data);
-                    })
-                    .catch(async (error) => {
-                        console.log(error);
-                        setError(true);
-                        setInfo("Błąd pobierania listy typów paliwa");
-                        await delay(5000);
-                        navigate('/', {replace: true});
-                    })
-            } else {
-                navigate('/', { replace: true });
-            }
+                .catch(async (error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd pobierania listy typów paliwa");
+                    await delay(5000);
+                    navigate('/', {replace: true});
+                })
+        } else {
+            navigate('/', { replace: true });
         }
-    }, []);
+    });
 
     const handleChangeProductionYear = event => {
         const value = Math.max(1970, Math.min(maxYear, Number(event.target.value)));
@@ -104,7 +95,7 @@ const AddCar = () => {
             setError(true);
         }
         else{
-            if (JSON.parse(localStorage.getItem('user')).roles.includes("ROLE_ADMIN")) {
+            if (userDetails.roles.includes("ROLE_ADMIN")) {
                 axios.post(API_URL + '/cars/add', {
                     horsePower: horsePower,
                     price: price,
@@ -114,7 +105,7 @@ const AddCar = () => {
                     capacity: capacity,
                     fuelType: fuelType,
                     year: productionYear,
-                    token: JSON.parse(localStorage.getItem('user')).token,
+                    token: userDetails.token,
                 })
                     .then(async () => {
                         setSuccess(true);
