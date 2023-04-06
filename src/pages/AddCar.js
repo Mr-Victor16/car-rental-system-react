@@ -37,7 +37,6 @@ const AddCar = () => {
             })
                 .then((response) => {
                     setFuelList(response.data);
-                    console.log(response.data);
                 })
                 .catch(async (error) => {
                     console.log(error);
@@ -49,7 +48,7 @@ const AddCar = () => {
         } else {
             navigate('/', { replace: true });
         }
-    });
+    }, [userDetails.token]);
 
     const handleChangeProductionYear = event => {
         const value = Math.max(1970, Math.min(maxYear, Number(event.target.value)));
