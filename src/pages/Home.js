@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
     Card,
@@ -9,28 +9,40 @@ import {
     Button,
     Grid,
     Stack,
-    Paper
+    Paper, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Snackbar, Alert
 } from "@mui/material";
+import ImageIcon  from '@mui/icons-material/Image';
+import EditIcon  from '@mui/icons-material/Edit';
+import DeleteIcon  from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux";
 const API_URL = "http://localhost:8080/api/cars";
 
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const [open, setOpen] = useState(false);
+    const [carID, setCarID] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [cars, setCars] = useState([]);
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [info, setInfo] = useState("");
 
     useEffect(() => {
+        getCarsList();
+    }, []);
+
+    const getCarsList = () => {
         axios.get(API_URL + '/available', { method: 'GET',
             mode: 'cors'
         })
             .then((response) => {
                 setCars(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
             })
-    }, []);
+    };
 
     const Item = styled(Paper)(({ theme }) => ({
         backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -39,6 +51,59 @@ const Home = () => {
         textAlign: 'center',
         color: theme.palette.text.secondary,
     }));
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleCloseError = async () => {
+        setError(false);
+    }
+
+    const handleCloseSuccess = async () => {
+        setSuccess(false);
+    }
+
+    const onFileUpload = () => {
+        const formData = new FormData();
+
+        formData.append(
+            "myFile",
+            selectedFile,
+            selectedFile.name
+        );
+
+        formData.append("carID", carID);
+        formData.append("token", userDetails.token);
+
+        if (userDetails.token !== "") {
+            axios.post(API_URL + '/change-image', formData, carID, userDetails.token, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+                .then(async () => {
+                    setError(false);
+                    setSuccess(true);
+                    setInfo("Pomyślnie zmieniono zdjęcie");
+                    setOpen(false);
+                    getCarsList();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas zmiany zdjęcia!");
+                })
+        }
+    };
+
+    const onFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
 
     function getFuelTypeName(name){
         switch(name){
@@ -90,6 +155,35 @@ const Home = () => {
                                     </CardContent>
                                     <CardActions style={{justifyContent: 'center'}}>
                                         {userDetails.token !== "" && (<Button variant="contained">Wynajmij auto</Button>)}
+
+                                        {userDetails.roles.includes("ROLE_ADMIN") && (
+                                            <>
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={() => {
+                                                        setCarID(car.id);
+                                                        handleClickOpen();
+                                                    }}
+                                                >
+                                                    <ImageIcon />
+                                                </Button>
+
+                                                <Button
+                                                    variant="contained"
+                                                    color="warning"
+                                                >
+                                                    <EditIcon />
+                                                </Button>
+
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                >
+                                                    <DeleteIcon />
+                                                </Button>
+                                            </>
+                                        )}
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -99,6 +193,30 @@ const Home = () => {
                     <h1>Brak danych do wyświetlenia</h1>
                 )}
             </Grid>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Zmień zdjęcie</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Wybierz nowe zdjęcie auta, a następnie zatwierdź zmiany przyciskiem.
+                    </DialogContentText>
+                    <input type="file" accept="image/*" onChange={onFileChange} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onFileUpload}>Zatwierdź zmianę</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
