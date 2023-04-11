@@ -23,8 +23,6 @@ const Login = () => {
     const logIn = async () => {
         axios.post("http://localhost:8080/api/auth/signin", { username,password })
         .then(response => {
-            console.log(response.data);
-
             if (response.data.token) {
                 dispatch(login(response.data));
             }
@@ -32,6 +30,7 @@ const Login = () => {
             navigate('/', { replace: true });
         })
         .catch((error) => {
+            console.log(error);
             setError(error);
             setOpen(true);
         })

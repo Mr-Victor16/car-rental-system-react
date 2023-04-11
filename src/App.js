@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import AddCar from "./pages/AddCar";
+import EditCar from "./pages/EditCar";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path='register' element={<Register />} />
           <Route path="profile" element={<Profile />} />
           <Route path="car/add" element={<AddCar />} />
+          <Route path="car/edit/:id" element={<EditCar />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

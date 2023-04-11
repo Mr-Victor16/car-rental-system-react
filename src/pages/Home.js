@@ -16,6 +16,7 @@ import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux";
+import {useNavigate} from "react-router-dom";
 const API_URL = "http://localhost:8080/api/cars";
 
 const Home = () => {
@@ -27,6 +28,7 @@ const Home = () => {
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [info, setInfo] = useState("");
+    let navigate = useNavigate();
 
     useEffect(() => {
         getCarsList();
@@ -172,6 +174,9 @@ const Home = () => {
                                                 <Button
                                                     variant="contained"
                                                     color="warning"
+                                                    onClick={() => {
+                                                        navigate(`/car/edit/${car.id}`)
+                                                    }}
                                                 >
                                                     <EditIcon />
                                                 </Button>
