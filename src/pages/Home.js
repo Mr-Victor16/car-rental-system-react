@@ -9,7 +9,17 @@ import {
     Button,
     Grid,
     Stack,
-    Paper, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Snackbar, Alert
+    Paper,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Dialog,
+    Snackbar,
+    Alert,
+    InputLabel,
+    TextField,
+    FormGroup
 } from "@mui/material";
 import ImageIcon  from '@mui/icons-material/Image';
 import EditIcon  from '@mui/icons-material/Edit';
@@ -17,11 +27,16 @@ import DeleteIcon  from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux";
 import {useNavigate} from "react-router-dom";
-const API_URL = "http://localhost:8080/api/cars";
+const API_URL = "http://localhost:8080/api";
 
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const [open, setOpen] = useState(false);
+    const [openRentalDialog, setOpenRentalDialog] = useState(false);
+    const [rentalStartDate, setRentalStartDate] = useState("");
+    const [rentalEndDate, setRentalEndDate] = useState("");
+    const [carPrice, setCarPrice] = useState(0);
+    const [rentalCost, setRentalCost] = useState(0);
     const [carID, setCarID] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [cars, setCars] = useState([]);
@@ -34,8 +49,12 @@ const Home = () => {
         getCarsList();
     }, []);
 
+    useEffect(() => {
+        handleChangeRentalDate();
+    }, [rentalStartDate, rentalEndDate]);
+
     const getCarsList = () => {
-        axios.get(API_URL + '/available', { method: 'GET',
+        axios.get(API_URL + '/cars/available', { method: 'GET',
             mode: 'cors'
         })
             .then((response) => {
@@ -62,6 +81,28 @@ const Home = () => {
         setOpen(false);
     };
 
+    const handleClickOpenRentalDialog = () => {
+        setOpenRentalDialog(true);
+    };
+
+    const handleCloseRentalDialog = () => {
+        setOpenRentalDialog(false);
+    };
+
+    const handleChangeRentalDate = () => {
+        if(rentalStartDate !== "" && rentalEndDate !== ""){
+            let startDate = new Date(rentalStartDate);
+            let endDate = new Date(rentalEndDate);
+
+            if (endDate < startDate) {
+                setRentalStartDate(rentalEndDate);
+            } else {
+                let difference = endDate.getTime() - startDate.getTime();
+                setRentalCost(carPrice * (Math.ceil(difference / (1000 * 3600 * 24))+1));
+            }
+        }
+    };
+
     const handleCloseError = async () => {
         setError(false);
     }
@@ -83,7 +124,7 @@ const Home = () => {
         formData.append("token", userDetails.token);
 
         if (userDetails.token !== "") {
-            axios.post(API_URL + '/change-image', formData, carID, userDetails.token, {
+            axios.post(API_URL + '/cars/change-image', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -105,6 +146,29 @@ const Home = () => {
 
     const onFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
+    };
+
+    const addCarRental = () => {
+        if (userDetails.token !== "") {
+            axios.post(API_URL + '/rental/add', {
+                startDate: rentalStartDate,
+                endDate: rentalEndDate,
+                addDate: new Date().toISOString().slice(0, 10),
+                carID: carID,
+                token: userDetails.token,
+            })
+                .then(async () => {
+                    setError(false);
+                    setSuccess(true);
+                    setInfo("Pomyślnie wysłano zapytanie o wynajem auta");
+                    setOpenRentalDialog(false);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas wynajmu auta!");
+                })
+        }
     };
 
     function getFuelTypeName(name){
@@ -156,7 +220,18 @@ const Home = () => {
                                         </Stack>
                                     </CardContent>
                                     <CardActions style={{justifyContent: 'center'}}>
-                                        {userDetails.token !== "" && (<Button variant="contained">Wynajmij auto</Button>)}
+                                        {userDetails.token !== "" && (
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setCarID(car.id);
+                                                    setCarPrice(car.price);
+                                                    handleClickOpenRentalDialog();
+                                                }}
+                                            >
+                                                Wynajmij
+                                            </Button>
+                                        )}
 
                                         {userDetails.roles.includes("ROLE_ADMIN") && (
                                             <>
@@ -211,6 +286,46 @@ const Home = () => {
                     <Button onClick={onFileUpload}>Zatwierdź zmianę</Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog open={openRentalDialog} onClose={handleCloseRentalDialog}>
+                <DialogTitle>Wynajmij auto</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Wybierz okres wynajmu, a następnie zatwierdź zmiany przyciskiem.
+                    </DialogContentText>
+                    <FormGroup>
+                        <InputLabel> Początek wynajmu </InputLabel>
+                        <TextField
+                            type={"date"}
+                            onChange={(e) => {
+                                setRentalStartDate(e.target.value);
+                            }}
+                            value={rentalStartDate}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <InputLabel> Koniec wynajmu </InputLabel>
+                        <TextField
+                            type={"date"}
+                            onChange={(e) => {
+                                setRentalEndDate(e.target.value);
+                            }}
+                            value={rentalEndDate}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <InputLabel> Koszt wynajmu </InputLabel>
+                        <TextField
+                            value={ rentalCost + ' zł'}
+                            readOnly
+                        />
+                    </FormGroup>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={addCarRental}>Wynajmij</Button>
+                </DialogActions>
+            </Dialog>
+
 
             <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
                 <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
