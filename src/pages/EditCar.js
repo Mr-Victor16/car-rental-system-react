@@ -6,6 +6,7 @@ import {
     InputLabel, Button, Grid, MenuItem, Alert, Fade
 } from '@mui/material';
 import { useSelector } from "react-redux";
+import AuthHeader from "../services/authHeader";
 const API_URL = "http://localhost:8080/api";
 
 const EditCar = () => {
@@ -30,6 +31,7 @@ const EditCar = () => {
     const [fuelType, setFuelType] = useState(1);
 
     const userDetails = useSelector((state) => state.userDetails);
+    const token = AuthHeader();
 
     useEffect(() => {
         getFuelList();
@@ -38,9 +40,8 @@ const EditCar = () => {
 
     const getCarInfo = () => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.post(API_URL + '/cars/get', {
-                id: id,
-                token: userDetails.token
+            axios.get(API_URL + '/cars/get/'+id, {
+                headers: token
             })
                 .then((response) => {
                     setHorsePower(response.data.horse_power);
@@ -66,9 +67,7 @@ const EditCar = () => {
 
     const getFuelList = () => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/fuel/list', { method: 'GET',
-                mode: 'cors'
-            })
+            axios.get(API_URL + '/fuel/list')
                 .then((response) => {
                     setFuelList(response.data);
                 })
@@ -122,7 +121,7 @@ const EditCar = () => {
         setSuccess(false);
     }
 
-    const addCar = async () => {
+    const editCar = async () => {
         if(horsePower === "" || price === "" || mileage === "" || brand === "" || model === "" || capacity === "" || productionYear === ""){
             setInfo("Nie wszystkie pola zostały wypełnione!");
             setError(true);
@@ -139,7 +138,8 @@ const EditCar = () => {
                     capacity: capacity,
                     fuelType: fuelType,
                     year: productionYear,
-                    token: userDetails.token,
+                },{
+                    headers: token,
                 })
                     .then(async () => {
                         setError(false);
@@ -256,7 +256,7 @@ const EditCar = () => {
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={addCar} fullWidth>Zapisz zmiany</Button>
+                        <Button variant="contained" onClick={editCar} fullWidth>Zapisz zmiany</Button>
                     </Grid>
                 </Grid>
             </Box>

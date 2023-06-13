@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useSelector } from "react-redux";
 
+const API_URL = "http://localhost:8080/api/auth/";
+
 const Register = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -22,7 +24,7 @@ const Register = () => {
 
     const signUp = async () => {
         if(password === confirmPassword){
-            axios.post("http://localhost:8080/api/auth/signup", { username: username, email: email, password: password})
+            axios.post(API_URL + "signup", { username: username, email: email, password: password})
             .then(() => {
                 navigate('/login', { replace: true });
             })

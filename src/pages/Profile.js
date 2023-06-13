@@ -20,9 +20,12 @@ import {
 } from '@mui/material';
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import AuthHeader from "../services/authHeader";
 
 const Profile = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const token = AuthHeader();
+
     let navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [newPassword, setNewPassword] = useState('');
@@ -55,8 +58,10 @@ const Profile = () => {
 
             if (userDetails.token !== "") {
                 axios.post(API_URL + '/profile/change-password', {
+                    userID: userDetails.id,
                     newPassword: newPassword,
-                    token: userDetails.token,
+                },{
+                    headers: token
                 })
                     .then(async () => {
                         setSuccess(true);

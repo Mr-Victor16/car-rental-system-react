@@ -5,6 +5,8 @@ import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/userDetailsReducer';
 
+const API_URL = "http://localhost:8080/api/auth/";
+
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -21,7 +23,7 @@ const Login = () => {
     });
 
     const logIn = async () => {
-        axios.post("http://localhost:8080/api/auth/signin", { username,password })
+        axios.post(API_URL + "signin", { username,password })
         .then(response => {
             if (response.data.token) {
                 dispatch(login(response.data));

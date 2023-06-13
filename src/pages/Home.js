@@ -27,10 +27,13 @@ import DeleteIcon  from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux";
 import {useNavigate} from "react-router-dom";
+import AuthHeader from "../services/authHeader";
 const API_URL = "http://localhost:8080/api";
 
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const token = AuthHeader();
+
     const [open, setOpen] = useState(false);
     const [openRentalDialog, setOpenRentalDialog] = useState(false);
     const [rentalStartDate, setRentalStartDate] = useState("");
@@ -53,10 +56,8 @@ const Home = () => {
         handleChangeRentalDate();
     }, [rentalStartDate, rentalEndDate]);
 
-    const getCarsList = () => {
-        axios.get(API_URL + '/cars/available', { method: 'GET',
-            mode: 'cors'
-        })
+    const getCarsList = async () => {
+        axios.get(API_URL + '/cars/available')
             .then((response) => {
                 setCars(response.data);
             })
@@ -111,7 +112,7 @@ const Home = () => {
         setSuccess(false);
     }
 
-    const onFileUpload = () => {
+    const onFileUpload = async () => {
         const formData = new FormData();
 
         formData.append(
@@ -121,13 +122,10 @@ const Home = () => {
         );
 
         formData.append("carID", carID);
-        formData.append("token", userDetails.token);
 
         if (userDetails.token !== "") {
             axios.post(API_URL + '/cars/change-image', formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+                    headers: token
             })
                 .then(async () => {
                     setError(false);
@@ -148,14 +146,16 @@ const Home = () => {
         setSelectedFile(event.target.files[0]);
     };
 
-    const addCarRental = () => {
+    const addCarRental = async () => {
         if (userDetails.token !== "") {
             axios.post(API_URL + '/rental/add', {
                 startDate: rentalStartDate,
                 endDate: rentalEndDate,
                 addDate: new Date().toISOString().slice(0, 10),
                 carID: carID,
-                token: userDetails.token,
+                userID: userDetails.id
+            },{
+                headers: token
             })
                 .then(async () => {
                     setError(false);
@@ -167,6 +167,25 @@ const Home = () => {
                     console.log(error);
                     setError(true);
                     setInfo("Błąd podczas wynajmu auta!");
+                })
+        }
+    };
+
+    const deleteCar = async (id) => {
+        if ((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))) {
+            axios.delete(API_URL + '/cars/delete/'+id, {
+                headers: token
+            })
+                .then(async () => {
+                    setError(false);
+                    setSuccess(true);
+                    setInfo("Pomyślnie usunięto auto");
+                    await getCarsList();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas usuwania auta!");
                 })
         }
     };
@@ -259,6 +278,9 @@ const Home = () => {
                                                 <Button
                                                     variant="contained"
                                                     color="error"
+                                                    onClick={() => {
+                                                        deleteCar(car.id);
+                                                    }}
                                                 >
                                                     <DeleteIcon />
                                                 </Button>

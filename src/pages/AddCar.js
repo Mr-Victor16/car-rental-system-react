@@ -6,6 +6,7 @@ import {
     InputLabel, Button, Grid, MenuItem, Alert, Fade
 } from '@mui/material';
 import { useSelector } from "react-redux";
+import AuthHeader from "../services/authHeader";
 const API_URL = "http://localhost:8080/api";
 
 const AddCar = () => {
@@ -29,12 +30,11 @@ const AddCar = () => {
     const [fuelType, setFuelType] = useState(1);
 
     const userDetails = useSelector((state) => state.userDetails);
+    const token = AuthHeader();
 
     useEffect(() => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/fuel/list', { method: 'GET',
-                mode: 'cors'
-            })
+            axios.get(API_URL + '/fuel/list')
                 .then((response) => {
                     setFuelList(response.data);
                 })
@@ -104,7 +104,8 @@ const AddCar = () => {
                     capacity: capacity,
                     fuelType: fuelType,
                     year: productionYear,
-                    token: userDetails.token,
+                },{
+                    headers: token,
                 })
                     .then(async () => {
                         setSuccess(true);
