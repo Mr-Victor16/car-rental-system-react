@@ -8,6 +8,9 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import AddCar from "./pages/AddCar";
 import EditCar from "./pages/EditCar";
+import MyRentals from "./pages/MyRentals";
+import Rentals from "./pages/Rentals";
+import CarList from "./pages/CarList";
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="car/add" element={<AddCar />} />
           <Route path="car/edit/:id" element={<EditCar />} />
+          <Route path="my-rentals" element={<MyRentals />} />
+          <Route path="rentals" element={<Rentals />} />
+          <Route path="car/list" element={<CarList />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

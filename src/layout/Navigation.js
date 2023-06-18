@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from "../store/userDetailsReducer";
+import AdminMenuListComposition from "../components/AdminMenuListComponent";
 
 const Navigation = () => {
     let navigate = useNavigate();
@@ -28,13 +29,7 @@ const Navigation = () => {
             {userDetails.roles.includes("ROLE_ADMIN") && (
                 <>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
-                        <Button
-                            component={Link}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                            to="car/add"
-                        >
-                            Dodaj auto
-                        </Button>
+                        <AdminMenuListComposition />
                     </Box>
                 </>
             )}
@@ -45,9 +40,18 @@ const Navigation = () => {
                         <Button
                             component={Link}
                             sx={{ my: 2, color: 'white', display: 'block' }}
+                            to="my-rentals"
+                        >
+                            Moje wynajmy
+                        </Button>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+                        <Button
+                            component={Link}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
                             to="profile"
                         >
-                            Profil
+                            Mój profil
                         </Button>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>

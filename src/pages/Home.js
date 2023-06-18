@@ -24,6 +24,7 @@ import {
 import ImageIcon  from '@mui/icons-material/Image';
 import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
+import CarRentalIcon from '@mui/icons-material/CarRental';
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux";
 import {useNavigate} from "react-router-dom";
@@ -132,7 +133,7 @@ const Home = () => {
                     setSuccess(true);
                     setInfo("Pomyślnie zmieniono zdjęcie");
                     setOpen(false);
-                    getCarsList();
+                    await getCarsList();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -248,7 +249,7 @@ const Home = () => {
                                                     handleClickOpenRentalDialog();
                                                 }}
                                             >
-                                                Wynajmij
+                                                <CarRentalIcon />
                                             </Button>
                                         )}
 
