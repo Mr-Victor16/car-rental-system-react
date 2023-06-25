@@ -56,26 +56,24 @@ const Profile = () => {
         if(newPassword !== ""){
             setOpen(false);
 
-            if (userDetails.token !== "") {
-                axios.post(API_URL + '/profile/change-password', {
-                    userID: userDetails.id,
-                    newPassword: newPassword,
-                },{
-                    headers: token
+            axios.post(API_URL + '/profile/change-password', {
+                userID: userDetails.id,
+                newPassword: newPassword,
+            },{
+                headers: token
+            })
+                .then(async () => {
+                    setSuccess(true);
+                    setInfo("Pomyślnie zmieniono hasło");
+                    await delay(4000);
+                    navigate('/', {replace: true});
+                    setError(false);
                 })
-                    .then(async () => {
-                        setSuccess(true);
-                        setInfo("Pomyślnie zmieniono hasło");
-                        await delay(4000);
-                        navigate('/', {replace: true});
-                        setError(false);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        setError(true);
-                        setInfo("Błąd podczas zmiany hasła!");
-                    })
-            }
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas zmiany hasła!");
+                })
         } else {
             setError(true);
             setInfo("Nie wprowadzono nowego hasła!");

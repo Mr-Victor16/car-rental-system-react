@@ -66,21 +66,17 @@ const EditCar = () => {
     };
 
     const getFuelList = () => {
-        if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/fuel/list')
-                .then((response) => {
-                    setFuelList(response.data);
-                })
-                .catch(async (error) => {
-                    console.log(error);
-                    setError(true);
-                    setInfo("Błąd pobierania listy typów paliwa");
-                    await delay(5000);
-                    navigate('/', {replace: true});
-                })
-        } else {
-            navigate('/', { replace: true });
-        }
+        axios.get(API_URL + '/fuel/list')
+            .then((response) => {
+                setFuelList(response.data);
+            })
+            .catch(async (error) => {
+                console.log(error);
+                setError(true);
+                setInfo("Błąd pobierania listy typów paliwa");
+                await delay(5000);
+                navigate('/', {replace: true});
+            })
     };
 
     const handleChangeProductionYear = event => {
@@ -127,36 +123,31 @@ const EditCar = () => {
             setError(true);
         }
         else{
-            if (userDetails.roles.includes("ROLE_ADMIN")) {
-                axios.post(API_URL + '/cars/edit', {
-                    id: id,
-                    horsePower: horsePower,
-                    price: price,
-                    mileage: mileage,
-                    brand: brand,
-                    model: model,
-                    capacity: capacity,
-                    fuelType: fuelType,
-                    year: productionYear,
-                },{
-                    headers: token,
+            axios.post(API_URL + '/cars/edit', {
+                id: id,
+                horsePower: horsePower,
+                price: price,
+                mileage: mileage,
+                brand: brand,
+                model: model,
+                capacity: capacity,
+                fuelType: fuelType,
+                year: productionYear,
+            },{
+                headers: token,
+            })
+                .then(async () => {
+                    setError(false);
+                    setSuccess(true);
+                    setInfo("Pomyślnie zmieniono informacje o aucie");
+                    await delay(5000);
+                    navigate('/', {replace: true});
                 })
-                    .then(async () => {
-                        setError(false);
-                        setSuccess(true);
-                        setInfo("Pomyślnie zmieniono informacje o aucie");
-                        await delay(5000);
-                        navigate('/', {replace: true});
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        setError(true);
-                        setInfo("Błąd podczas zmiany danych auta!");
-                    })
-            } else {
-                setError(true);
-                setInfo("Brak uprawnień!");
-            }
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas zmiany danych auta!");
+                })
         }
     }
 

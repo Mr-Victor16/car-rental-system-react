@@ -67,22 +67,20 @@ const Rentals = () => {
     };
 
     const deleteRental = (id) => {
-        if ((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))) {
-            axios.delete(API_URL + '/rental/delete/'+id, {
-                headers: token
+        axios.delete(API_URL + '/rental/delete/'+id, {
+            headers: token
+        })
+            .then(async () => {
+                setError(false);
+                setSuccess(true);
+                setInfo("Pomyślnie usunięto wynajem");
+                getRentals();
             })
-                .then(async () => {
-                    setError(false);
-                    setSuccess(true);
-                    setInfo("Pomyślnie usunięto wynajem");
-                    getRentals();
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setError(true);
-                    setInfo("Błąd podczas usuwania wynajmu!");
-                })
-        }
+            .catch((error) => {
+                console.log(error);
+                setError(true);
+                setInfo("Błąd podczas usuwania wynajmu!");
+            })
     };
 
     useEffect(() => {
@@ -103,7 +101,6 @@ const Rentals = () => {
                 marginTop={20}
             >
                 <Stack spacing={2}>
-
                     <Typography variant='h4' align='center'>Lista wynajmów</Typography>
 
                     <TableContainer component={Paper}>

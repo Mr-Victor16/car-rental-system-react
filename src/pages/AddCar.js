@@ -94,35 +94,30 @@ const AddCar = () => {
             setError(true);
         }
         else{
-            if (userDetails.roles.includes("ROLE_ADMIN")) {
-                axios.post(API_URL + '/cars/add', {
-                    horsePower: horsePower,
-                    price: price,
-                    mileage: mileage,
-                    brand: brand,
-                    model: model,
-                    capacity: capacity,
-                    fuelType: fuelType,
-                    year: productionYear,
-                },{
-                    headers: token,
+            axios.post(API_URL + '/cars/add', {
+                horsePower: horsePower,
+                price: price,
+                mileage: mileage,
+                brand: brand,
+                model: model,
+                capacity: capacity,
+                fuelType: fuelType,
+                year: productionYear,
+            },{
+                headers: token,
+            })
+                .then(async () => {
+                    setSuccess(true);
+                    setInfo("Pomyślnie dodano auto");
+                    await delay(5000);
+                    navigate('/', {replace: true});
+                    setError(false);
                 })
-                    .then(async () => {
-                        setSuccess(true);
-                        setInfo("Pomyślnie dodano auto");
-                        await delay(5000);
-                        navigate('/', {replace: true});
-                        setError(false);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        setError(true);
-                        setInfo("Błąd podczas dodawania auta!");
-                    })
-            } else {
-                setError(true);
-                setInfo("Brak uprawnień!");
-            }
+                .catch((error) => {
+                    console.log(error);
+                    setError(true);
+                    setInfo("Błąd podczas dodawania auta!");
+                })
         }
     }
 

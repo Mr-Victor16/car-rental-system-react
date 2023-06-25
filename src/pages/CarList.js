@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import ChangeImageDialog from "../components/ChangeImageDialog";
+import CarInfoDialog from "../components/CarInfoDialog";
 
 const CarList = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -84,22 +85,36 @@ const CarList = () => {
     };
 
     const deleteCar = (id) => {
-        if ((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))) {
-            axios.delete(API_URL + '/cars/delete/'+id, {
-                headers: token
+        axios.delete(API_URL + '/cars/delete/'+id, {
+            headers: token
+        })
+            .then(async () => {
+                setError(false);
+                setSuccess(true);
+                setInfo("Pomyślnie usunięto auto");
+                getCars();
             })
-                .then(async () => {
-                    setError(false);
-                    setSuccess(true);
-                    setInfo("Pomyślnie usunięto auto");
-                    getCars();
-                })
-                .catch((error) => {
-                    console.log(error);
-                    setError(true);
-                    setInfo("Błąd podczas usuwania auta!");
-                })
-        }
+            .catch((error) => {
+                console.log(error);
+                setError(true);
+                setInfo("Błąd podczas usuwania auta!");
+            })
+    };
+
+    const changeCarStatus = (id) => {
+        axios.post(API_URL + '/cars/status/'+id, {}, {
+            headers: token
+        })
+            .then(() => {
+                setSuccess(true);
+                setInfo("Pomyślnie zmieniono status dostępności auta");
+                getCars();
+            })
+            .catch((error) => {
+                console.log(error);
+                setError(true);
+                setInfo("Wystąpił błąd podczas zmiany statusu dostępności auta");
+            })
     };
 
     useEffect(() => {
@@ -150,26 +165,23 @@ const CarList = () => {
                                             key={car.id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
-
-                                            <TableCell component="th" scope="row">
-                                                {index+1}
-                                            </TableCell>
+                                            <TableCell component="th" scope="row">{index+1}</TableCell>
                                             <TableCell align="center">{car.brand.name + ' ' + car.model.name}</TableCell>
                                             <TableCell align="center">{car.year}</TableCell>
                                             <TableCell align="center">{getFuelTypeName(car.fuelType.name)}</TableCell>
                                             <TableCell align="center">{car.price + ' zł'}</TableCell>
                                             <TableCell align="center">{getStatusName(car.available)}</TableCell>
                                             <TableCell align="center">
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                >
-                                                    <InfoIcon fontSize="small" />
-                                                </Button>
+                                                <ChangeImageDialog carID={car.id} cars={[setCars]} />
+                                                &nbsp;
+                                                <CarInfoDialog carInfo={car} />
                                                 &nbsp;
                                                 <Button
                                                     variant="contained"
                                                     color="secondary"
+                                                    onClick={() => {
+                                                        changeCarStatus(car.id);
+                                                    }}
                                                 >
                                                     <ChangeCircleIcon fontSize="small" />
                                                 </Button>

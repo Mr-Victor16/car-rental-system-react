@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from "../store/userDetailsReducer";
-import AdminMenuListComposition from "../components/AdminMenuListComponent";
+import AdminMenuList from "../components/AdminMenuList";
 
 const Navigation = () => {
     let navigate = useNavigate();
@@ -22,14 +22,14 @@ const Navigation = () => {
                     sx={{ my: 2, color: 'white', display: 'block' }}
                     to="home"
                 >
-                    Home
+                    Strona główna
                 </Button>
             </Box>
 
             {userDetails.roles.includes("ROLE_ADMIN") && (
                 <>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
-                        <AdminMenuListComposition />
+                        <AdminMenuList />
                     </Box>
                 </>
             )}
