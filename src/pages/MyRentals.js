@@ -7,6 +7,7 @@ import {
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
+import RentalInfoDialog from "../components/RentalInfoDialog";
 
 const MyRentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -93,6 +94,7 @@ const MyRentals = () => {
                                     <TableCell align="center">Auto</TableCell>
                                     <TableCell align="center">Status</TableCell>
                                     <TableCell align="center">Koszt</TableCell>
+                                    <TableCell align="center">Szczegóły</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -111,9 +113,10 @@ const MyRentals = () => {
                                         <TableCell align="center">{rental.car.brand.name + ' ' + rental.car.model.name}</TableCell>
                                         <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
                                         <TableCell align="center">{rental.price + ' zł'}</TableCell>
+                                        <TableCell align="center"><RentalInfoDialog statusHistory={rental.statusHistory} /></TableCell>
                                     </TableRow>
                                 ))) : (
-                                    <TableRow><TableCell colspan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
                                 )}
                             </TableBody>
                         </Table>

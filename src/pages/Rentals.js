@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import RentalInfoDialog from "../components/RentalInfoDialog";
+import ChangeRentalStatusDialog from "../components/ChangeRentalStatusDialog";
 
 const Rentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -21,7 +21,7 @@ const Rentals = () => {
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [info, setInfo] = useState("");
-
+    const [statusList, setStatusList] = useState([]);
     const [rentals, setRentals] = useState([]);
 
     const handleCloseError = async () => {
@@ -88,8 +88,25 @@ const Rentals = () => {
             navigate('/', {replace: true});
         } else {
             getRentals();
+            getStatusList();
         }
     },[userDetails.token]);
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const getStatusList = () => {
+        axios.get(API_URL + '/rental/status/list')
+            .then((response) => {
+                setStatusList(response.data);
+            })
+            .catch(async (error) => {
+                console.log(error);
+                setError(true);
+                setInfo("Błąd pobierania statusów wynajmu");
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
+    };
 
     return (
         <Container maxWidth="lg">
@@ -135,19 +152,14 @@ const Rentals = () => {
                                         <TableCell align="center">{rental.price + ' zł'}</TableCell>
                                         <TableCell align="center">{rental.user.username}</TableCell>
                                         <TableCell align="center">
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                            >
-                                                <InfoIcon fontSize="small" />
-                                            </Button>
+                                            <RentalInfoDialog statusHistory={rental.statusHistory} />
                                             &nbsp;
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                            >
-                                                <BookmarkIcon fontSize="small" />
-                                            </Button>
+                                            <ChangeRentalStatusDialog
+                                                setRentals={[setRentals]}
+                                                statusList={statusList}
+                                                status={rental.rentalStatus}
+                                                rentalID={rental.id}
+                                            />
                                             &nbsp;
                                             <Button
                                                 variant="contained"
@@ -168,7 +180,7 @@ const Rentals = () => {
                                         </TableCell>
                                     </TableRow>
                                 ))) : (
-                                    <TableRow><TableCell colspan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
                                 )}
                             </TableBody>
                         </Table>

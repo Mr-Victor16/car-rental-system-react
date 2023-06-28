@@ -208,7 +208,7 @@ const CarList = () => {
                                             </TableCell>
                                         </TableRow>
                                     ))) : (
-                                    <TableRow><TableCell colspan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
                                 )}
                             </TableBody>
                         </Table>
