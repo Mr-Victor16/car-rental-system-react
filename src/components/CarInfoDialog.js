@@ -81,7 +81,7 @@ export default function CarInfoDialog(props){
 
                         <GridItem xs={4} md={6} icon={<FuelIcon />} primaryText={"Paliwo"} secondaryText={getFuelTypeName(car.fuelType.name)} />
                         <GridItem xs={4} md={6} icon={<ServiceIcon />} primaryText={"Przebieg"} secondaryText={car.mileage + ' km'} />
-                        <GridItem xs={4} md={6} icon={<CarIcon />} primaryText={"Silnik"} secondaryText={car.capacity + ', ' + car.horse_power + ' KM'} />
+                        <GridItem xs={4} md={6} icon={<CarIcon />} primaryText={"Silnik"} secondaryText={car.capacity + ', ' + car.horsePower + ' KM'} />
                         <GridItem xs={4} md={6} icon={<MoneyIcon />} primaryText={"Cena"} secondaryText={car.price + ' zł'} />
                     </Grid>
                 </DialogContent>

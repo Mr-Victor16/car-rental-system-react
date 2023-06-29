@@ -123,7 +123,7 @@ const Home = () => {
                                         </Typography>
                                         <Stack spacing={2}>
                                             <Item>Przebieg: {car.mileage} km</Item>
-                                            <Item>Silnik: {car.capacity + ", " + car.horse_power + "KM"}</Item>
+                                            <Item>Silnik: {car.capacity + ", " + car.horsePower + "KM"}</Item>
                                             <Item>Paliwo: {getFuelTypeName(car.fuelType.name)}</Item>
                                             <Item>Cena za dobę: {car.price + "zł"}</Item>
                                         </Stack>

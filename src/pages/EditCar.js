@@ -3,7 +3,7 @@ import axios from "axios";
 import {useNavigate, useParams} from 'react-router-dom';
 import {
     TextField, Typography, Box, Select, Container, FormGroup,
-    InputLabel, Button, Grid, MenuItem, Alert, Fade
+    InputLabel, Button, Grid, MenuItem, Alert, Snackbar
 } from '@mui/material';
 import { useSelector } from "react-redux";
 import AuthHeader from "../services/authHeader";
@@ -44,7 +44,7 @@ const EditCar = () => {
                 headers: token
             })
                 .then((response) => {
-                    setHorsePower(response.data.horse_power);
+                    setHorsePower(response.data.horsePower);
                     setPrice(response.data.price);
                     setMileage(response.data.mileage);
                     setBrand(response.data.brand.name);
@@ -160,13 +160,6 @@ const EditCar = () => {
                 autoComplete="off"
                 marginTop={10}
             >
-                <Fade in={error} autohideduration={60000} onClose={handleCloseError}>
-                    <Alert severity="error">{info}</Alert>
-                </Fade>
-                <Fade in={success} autohideduration={60000} onClose={handleCloseSuccess}>
-                    <Alert severity="success">{info}</Alert>
-                </Fade>
-
                 <Grid container spacing={2}>
                     <Grid item xs={12} alignItems={"center"}>
                         <Typography variant='h3' align='center'>Edytuj informacje o aucie</Typography>
@@ -251,6 +244,17 @@ const EditCar = () => {
                     </Grid>
                 </Grid>
             </Box>
+
+            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

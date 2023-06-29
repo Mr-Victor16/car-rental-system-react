@@ -1,18 +1,18 @@
-# Car rental system [Frontend]
-Repozytorium w ciągłym rozwoju - wczesny etap tworzenia.  
-Frontend do projektu: [car-rental-system-spring](https://github.com/Mr-Victor16/car-rental-system-spring)
+# Car Rental System [Frontend]
+Car Rental System is a project for a simple car rental system that was created for the purpose of learning how to create frontend side of the project.
 
-## Obecnie zaimplementowane funkcjonalności:
-- Zwracanie wszystkich dostępnych do wynajęcia aut
-![img_3.png](img_3.png)
+The backend for this project can be found in the repository - [car-rental-system-spring](https://github.com/Mr-Victor16/car-rental-system-spring)
 
-- Logowanie, rejestracja, prosty podgląd profilu, wylogowywanie
-![img_1.png](img_1.png)
-![img_5.png](img_5.png)
-![img_4.png](img_4.png)  
+## Technologies used
++ React.js
++ MaterialUI
++ Axios
++ Redux
++ Node.js
 
-- Dodawanie oraz edycja aut
-![img.png](img.png)
-
-- Wynajem pojazdów wraz z obliczaniem kosztów
-![img_2.png](img_2.png)
+## How to launch?
++ Use the following command to install the required modules:  
+`npm install`
+####
++ Use the following command to launch the application:  
+`npm start`

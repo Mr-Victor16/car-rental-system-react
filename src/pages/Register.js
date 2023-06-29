@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, TextField, Box, Button, Stack, Container, Alert, Fade } from '@mui/material';
+import { Typography, TextField, Box, Button, Stack, Container, Alert, Snackbar } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -11,8 +11,9 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [open, setOpen] = React.useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [info, setInfo] = useState("");
     let navigate = useNavigate();
     const userDetails = useSelector((state) => state.userDetails);
 
@@ -28,20 +29,29 @@ const Register = () => {
             .then(() => {
                 navigate('/login', { replace: true });
             })
-            .catch((error) => {
-                console.log(password.valueOf, email.valueOf, username.valueOf, "a");
-                setError(error.message);
-                setOpen(true);
-            })
+                .catch(function(error) {
+                    if(error.response.status === 401) {
+                        setInfo("Sprawdź czy wszystkie pola zostały uzupełnione poprawnie");
+                    } else if(error.response.status === 409) {
+                        setInfo("Nazwa użytkownika lub/i hasło jest już zajęte");
+                    } else {
+                        setInfo("Wystąpił błąd podczas próby rejestracji, skontaktuj się z administratorem");
+                    }
+                    setError(true);
+                })
         }
         else if (password !== confirmPassword) {
-            setError("Hasła nie są takie same!");
-            setOpen(true);
+            setInfo("Hasła nie są takie same!");
+            setError(true);
         }
     }
 
-    const handleClose = async () => {
-        setOpen(false);
+    const handleCloseError = async () => {
+        setError(false);
+    }
+
+    const handleCloseSuccess = async () => {
+        setSuccess(false);
     }
 
     return (
@@ -55,10 +65,6 @@ const Register = () => {
             >
                 <Stack spacing={2}>
                     <Typography variant='h3' align='center'>Rejestracja</Typography>
-
-                    <Fade in={open} autohideduration={60000} onClose={handleClose}>
-                        <Alert severity="error">{error}</Alert>
-                    </Fade>
 
                     <TextField
                         required
@@ -90,7 +96,18 @@ const Register = () => {
                     <Button variant="contained" onClick={signUp}>Zarejestruj się</Button>
                     <Button variant="outlined" component={Link} to="../login">Masz już konto? Zaloguj się</Button>
                 </Stack>
-                </Box>    
+            </Box>
+
+            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                    {info}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
