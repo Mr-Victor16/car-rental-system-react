@@ -40,24 +40,31 @@ const EditCar = () => {
 
     const getCarInfo = () => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/cars/get/'+id, {
+            axios.get(API_URL + '/car/'+id, {
                 headers: token
             })
-                .then((response) => {
-                    setHorsePower(response.data.horsePower);
-                    setPrice(response.data.price);
-                    setMileage(response.data.mileage);
-                    setBrand(response.data.brand.name);
-                    setModel(response.data.model.name);
-                    setCapacity(response.data.capacity);
-                    setFuelType(response.data.fuelType.id);
-                    setProductionYear(response.data.year);
+                .then(async (response) => {
+                    if(response.data.length === 0){
+                        setError(true);
+                        setInfo("Nie znaleziono wskazanego auta");
+                        await delay(2000);
+                        navigate("../car/add");
+                    } else {
+                        setHorsePower(response.data.horsePower);
+                        setPrice(response.data.price);
+                        setMileage(response.data.mileage);
+                        setBrand(response.data.brand.name);
+                        setModel(response.data.model.name);
+                        setCapacity(response.data.capacity);
+                        setFuelType(response.data.fuelType.id);
+                        setProductionYear(response.data.year);
+                    }
                 })
                 .catch(async (error) => {
                     console.log(error);
                     setError(true);
                     setInfo("Błąd pobierania danych o aucie");
-                    await delay(5000);
+                    await delay(2000);
                     navigate('/', {replace: true});
                 })
         } else {
@@ -66,15 +73,22 @@ const EditCar = () => {
     };
 
     const getFuelList = () => {
-        axios.get(API_URL + '/fuel/list')
+        axios.get(API_URL + '/fuels')
             .then((response) => {
-                setFuelList(response.data);
+                if (response.data.length === 0) {
+                    //setError(true);
+                    //setInfo("Błąd pobierania listy typów paliwa");
+                    //await delay(2000);
+                    navigate('/', {replace: true});
+                } else {
+                    setFuelList(response.data);
+                }
             })
             .catch(async (error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd pobierania listy typów paliwa");
-                await delay(5000);
+                //setError(true);
+                //setInfo("Błąd pobierania listy typów paliwa");
+                //await delay(5000);
                 navigate('/', {replace: true});
             })
     };
@@ -123,8 +137,7 @@ const EditCar = () => {
             setError(true);
         }
         else{
-            axios.post(API_URL + '/cars/edit', {
-                id: id,
+            axios.put(API_URL + '/car/'+id, {
                 horsePower: horsePower,
                 price: price,
                 mileage: mileage,

@@ -69,7 +69,7 @@ export default function CarRentalDialog(props){
     };
 
     const addCarRental = async () => {
-        axios.post(API_URL + '/rental/add', {
+        axios.post(API_URL + '/rental', {
             startDate: rentalStartDate,
             endDate: rentalEndDate,
             addDate: new Date().toISOString().slice(0, 10),

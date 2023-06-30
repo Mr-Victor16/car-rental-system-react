@@ -49,16 +49,9 @@ export default function ChangeImageDialog(props) {
 
     const onFileUpload = async () => {
         const formData = new FormData();
+        formData.append("file", selectedFile, selectedFile.name);
 
-        formData.append(
-            "myFile",
-            selectedFile,
-            selectedFile.name
-        );
-
-        formData.append("carID", carID);
-
-        axios.post(API_URL + '/cars/change-image', formData, {
+        axios.put(API_URL + '/car/'+carID+'/image', formData, {
             headers: token
         })
             .then(async () => {

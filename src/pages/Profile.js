@@ -56,8 +56,7 @@ const Profile = () => {
         if(newPassword !== ""){
             setOpen(false);
 
-            axios.post(API_URL + '/profile/change-password', {
-                userID: userDetails.id,
+            axios.put(API_URL + '/profile/' + userDetails.id + '/password', {
                 newPassword: newPassword,
             },{
                 headers: token

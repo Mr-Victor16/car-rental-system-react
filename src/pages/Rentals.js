@@ -53,7 +53,7 @@ const Rentals = () => {
     }
 
     const getRentals = () => {
-        axios.get(API_URL + '/rental/get/all',{
+        axios.get(API_URL + '/rentals',{
             headers: token
         })
             .then((response) => {
@@ -67,7 +67,7 @@ const Rentals = () => {
     };
 
     const deleteRental = (id) => {
-        axios.delete(API_URL + '/rental/delete/'+id, {
+        axios.delete(API_URL + '/rental/'+id, {
             headers: token
         })
             .then(async () => {
@@ -92,18 +92,22 @@ const Rentals = () => {
         }
     },[userDetails.token]);
 
-    const delay = ms => new Promise(res => setTimeout(res, ms));
-
     const getStatusList = () => {
-        axios.get(API_URL + '/rental/status/list')
+        axios.get(API_URL + '/rental-statuses')
             .then((response) => {
-                setStatusList(response.data);
+                if (response.data.length === 0) {
+                    setError(true);
+                    setInfo("Błąd pobierania statusów wynajmu");
+                    navigate('/', {replace: true});
+                } else {
+                    setStatusList(response.data);
+                }
             })
             .catch(async (error) => {
                 console.log(error);
                 setError(true);
                 setInfo("Błąd pobierania statusów wynajmu");
-                await delay(2000);
+                //await delay(2000);
                 navigate('/', {replace: true});
             })
     };

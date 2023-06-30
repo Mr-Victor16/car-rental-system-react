@@ -64,7 +64,7 @@ const Home = () => {
     }
 
     const deleteCar = async (id) => {
-        axios.delete(API_URL + '/cars/delete/'+id, {
+        axios.delete(API_URL + '/car/'+id, {
             headers: token
         })
             .then(async () => {

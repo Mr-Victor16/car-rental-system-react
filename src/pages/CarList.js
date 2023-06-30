@@ -71,7 +71,7 @@ const CarList = () => {
     }
 
     const getCars = () => {
-        axios.get(API_URL + '/cars/all',{
+        axios.get(API_URL + '/cars',{
             headers: token
         })
             .then((response) => {
@@ -85,7 +85,7 @@ const CarList = () => {
     };
 
     const deleteCar = (id) => {
-        axios.delete(API_URL + '/cars/delete/'+id, {
+        axios.delete(API_URL + '/car/'+id, {
             headers: token
         })
             .then(async () => {
@@ -102,7 +102,7 @@ const CarList = () => {
     };
 
     const changeCarStatus = (id) => {
-        axios.post(API_URL + '/cars/status/'+id, {}, {
+        axios.put(API_URL + '/car/'+id+'/status', {}, {
             headers: token
         })
             .then(() => {

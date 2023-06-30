@@ -34,15 +34,22 @@ const AddCar = () => {
 
     useEffect(() => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/fuel/list')
+            axios.get(API_URL + '/fuels')
                 .then((response) => {
-                    setFuelList(response.data);
+                    if (response.data.length === 0) {
+                        //setError(true);
+                        //setInfo("Błąd pobierania listy typów paliwa");
+                        //await delay(2000);
+                        navigate('/', {replace: true});
+                    } else {
+                        setFuelList(response.data);
+                    }
                 })
                 .catch(async (error) => {
                     console.log(error);
-                    setError(true);
-                    setInfo("Błąd pobierania listy typów paliwa");
-                    await delay(5000);
+                    // setError(true);
+                    // setInfo("Błąd pobierania listy typów paliwa");
+                    // await delay(5000);
                     navigate('/', {replace: true});
                 })
         } else {
@@ -94,7 +101,7 @@ const AddCar = () => {
             setError(true);
         }
         else{
-            axios.post(API_URL + '/cars/add', {
+            axios.post(API_URL + '/car', {
                 horsePower: horsePower,
                 price: price,
                 mileage: mileage,

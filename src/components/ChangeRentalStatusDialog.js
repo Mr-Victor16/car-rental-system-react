@@ -61,7 +61,7 @@ export default function ChangeRentalStatusDialog(props){
     const handleChange = (event) => {
         setStatus(event.target.value);
 
-        axios.post(API_URL + '/rental/status/'+event.target.value+'/rental/'+rentalID, {},{
+        axios.put(API_URL + '/rental/'+rentalID+'/status/'+event.target.value, {},{
             headers: token,
         })
             .then(async () => {
@@ -81,7 +81,7 @@ export default function ChangeRentalStatusDialog(props){
     };
 
     const getRentals = () => {
-        axios.get(API_URL + '/rental/get/all',{
+        axios.get(API_URL + '/rentals',{
             headers: token
         })
             .then((response) => {

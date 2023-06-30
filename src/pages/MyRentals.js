@@ -50,7 +50,7 @@ const MyRentals = () => {
     }
 
     const getRentals = () => {
-        axios.get(API_URL + '/rental/get/user/'+userDetails.id,{
+        axios.get(API_URL + '/rentals/'+userDetails.id,{
             headers: token
         })
             .then((response) => {
