@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import Button from '@mui/material/Button';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
+import {Button, Grow, MenuItem, MenuList, Paper, Popper, Stack} from "@mui/material";
 
 export default function AdminMenuList() {
     const [open, setOpen] = useState(false);

@@ -11,26 +11,30 @@ import EditCar from "./pages/EditCar";
 import MyRentals from "./pages/MyRentals";
 import Rentals from "./pages/Rentals";
 import CarList from "./pages/CarList";
+import GlobalSnackbar from "./components/GlobalSnackbar";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="home" element={<Home />} />
-          <Route path="login" element={<Login />} />
-          <Route path='register' element={<Register />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="car/add" element={<AddCar />} />
-          <Route path="car/edit/:id" element={<EditCar />} />
-          <Route path="my-rentals" element={<MyRentals />} />
-          <Route path="rentals" element={<Rentals />} />
-          <Route path="car/list" element={<CarList />} />
-          <Route path="*" element={<NoPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+      <>
+        <GlobalSnackbar />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="home" element={<Home />} />
+              <Route path="login" element={<Login />} />
+              <Route path='register' element={<Register />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="car/add" element={<AddCar />} />
+              <Route path="car/edit/:id" element={<EditCar />} />
+              <Route path="my-rentals" element={<MyRentals />} />
+              <Route path="rentals" element={<Rentals />} />
+              <Route path="car/list" element={<CarList />} />
+              <Route path="*" element={<NoPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </>
   );
 }
 

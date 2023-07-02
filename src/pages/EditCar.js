@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useNavigate, useParams} from 'react-router-dom';
-import {
-    TextField, Typography, Box, Select, Container, FormGroup,
-    InputLabel, Button, Grid, MenuItem, Alert, Snackbar
-} from '@mui/material';
-import { useSelector } from "react-redux";
+import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem} from '@mui/material';
+import {useDispatch, useSelector} from "react-redux";
 import AuthHeader from "../services/authHeader";
+import {showSnackbar} from "../actions/snackbarActions";
 const API_URL = "http://localhost:8080/api";
 
 const EditCar = () => {
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
-
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
     let { id } = useParams();
@@ -31,6 +25,7 @@ const EditCar = () => {
     const [fuelType, setFuelType] = useState(1);
 
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     useEffect(() => {
@@ -45,8 +40,7 @@ const EditCar = () => {
             })
                 .then(async (response) => {
                     if(response.data.length === 0){
-                        setError(true);
-                        setInfo("Nie znaleziono wskazanego auta");
+                        dispatch(showSnackbar("Nie znaleziono wskazanego auta", false));
                         await delay(2000);
                         navigate("../car/add");
                     } else {
@@ -62,8 +56,7 @@ const EditCar = () => {
                 })
                 .catch(async (error) => {
                     console.log(error);
-                    setError(true);
-                    setInfo("Błąd pobierania danych o aucie");
+                    dispatch(showSnackbar("Błąd pobierania danych o aucie", false));
                     await delay(2000);
                     navigate('/', {replace: true});
                 })
@@ -76,8 +69,7 @@ const EditCar = () => {
         axios.get(API_URL + '/fuels')
             .then((response) => {
                 if (response.data.length === 0) {
-                    //setError(true);
-                    //setInfo("Błąd pobierania listy typów paliwa");
+                    dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
                     //await delay(2000);
                     navigate('/', {replace: true});
                 } else {
@@ -86,9 +78,8 @@ const EditCar = () => {
             })
             .catch(async (error) => {
                 console.log(error);
-                //setError(true);
-                //setInfo("Błąd pobierania listy typów paliwa");
-                //await delay(5000);
+                dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
+                //await delay(2000);
                 navigate('/', {replace: true});
             })
     };
@@ -123,18 +114,9 @@ const EditCar = () => {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
-
     const editCar = async () => {
         if(horsePower === "" || price === "" || mileage === "" || brand === "" || model === "" || capacity === "" || productionYear === ""){
-            setInfo("Nie wszystkie pola zostały wypełnione!");
-            setError(true);
+            dispatch(showSnackbar("Nie wszystkie pola zostały wypełnione!", false));
         }
         else{
             axios.put(API_URL + '/car/'+id, {
@@ -150,16 +132,13 @@ const EditCar = () => {
                 headers: token,
             })
                 .then(async () => {
-                    setError(false);
-                    setSuccess(true);
-                    setInfo("Pomyślnie zmieniono informacje o aucie");
-                    await delay(5000);
+                    dispatch(showSnackbar("Pomyślnie zmieniono informacje o aucie", true));
+                    await delay(2000);
                     navigate('/', {replace: true});
                 })
                 .catch((error) => {
                     console.log(error);
-                    setError(true);
-                    setInfo("Błąd podczas zmiany danych auta!");
+                    dispatch(showSnackbar("Błąd podczas zmiany danych auta", false));
                 })
         }
     }
@@ -257,17 +236,6 @@ const EditCar = () => {
                     </Grid>
                 </Grid>
             </Box>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

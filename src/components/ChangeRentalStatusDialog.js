@@ -1,26 +1,16 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    InputLabel,
-    FormControl,
-    MenuItem,
-    Select,
-    Snackbar,
-    Alert
-} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, FormControl, MenuItem, Select} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AuthHeader from "../services/authHeader";
+import {showSnackbar} from "../actions/snackbarActions";
 const API_URL = "http://localhost:8080/api";
 
 export default function ChangeRentalStatusDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -30,9 +20,6 @@ export default function ChangeRentalStatusDialog(props){
     const [rentalID] = useState(props.rentalID);
     const [statusList] = useState(props.statusList);
     let navigate = useNavigate();
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
 
     useEffect(() => {
         if (!userDetails.roles.includes('ROLE_ADMIN')) {
@@ -48,14 +35,6 @@ export default function ChangeRentalStatusDialog(props){
         setOpenDialog(false);
     };
 
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
-
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const handleChange = (event) => {
@@ -65,17 +44,14 @@ export default function ChangeRentalStatusDialog(props){
             headers: token,
         })
             .then(async () => {
-                setError(false);
-                setSuccess(true);
-                setInfo("Pomyślnie zmieniono status wynajmu");
-                await delay(1000);
+                dispatch(showSnackbar("Pomyślnie zmieniono status wynajmu", true));
+                await delay(2000);
                 getRentals();
                 handleClose();
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas zmiany statusu wynajmu!");
+                dispatch(showSnackbar("Błąd podczas zmiany statusu wynajmu", false));
             })
 
     };
@@ -89,8 +65,7 @@ export default function ChangeRentalStatusDialog(props){
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas pobierania listy wynajmów");
+                dispatch(showSnackbar("Błąd podczas pobierania listy wynajmów", false));
             })
     };
 
@@ -154,17 +129,6 @@ export default function ChangeRentalStatusDialog(props){
                     <Button onClick={handleClose}>Zamknij</Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </>
     );
 }

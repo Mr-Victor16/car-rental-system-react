@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-    Typography, Box, Stack, Container, Alert, Snackbar, TableRow,
-    TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button
-} from '@mui/material';
-import { useSelector } from "react-redux";
+import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
+import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import EditIcon  from '@mui/icons-material/Edit';
@@ -12,26 +9,16 @@ import DeleteIcon  from '@mui/icons-material/Delete';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import ChangeImageDialog from "../components/ChangeImageDialog";
 import CarInfoDialog from "../components/CarInfoDialog";
+import {showSnackbar} from "../actions/snackbarActions";
 
 const CarList = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
-
     const [cars, setCars] = useState([]);
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
 
     function getStatusName(name){
         switch(name){
@@ -79,8 +66,7 @@ const CarList = () => {
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas pobierania listy aut");
+                dispatch(showSnackbar("Błąd podczas pobierania listy aut", false));
             })
     };
 
@@ -89,15 +75,12 @@ const CarList = () => {
             headers: token
         })
             .then(async () => {
-                setError(false);
-                setSuccess(true);
-                setInfo("Pomyślnie usunięto auto");
+                dispatch(showSnackbar("Pomyślnie usunięto auto", true));
                 getCars();
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas usuwania auta!");
+                dispatch(showSnackbar("Błąd podczas usuwania auta", false));
             })
     };
 
@@ -106,14 +89,12 @@ const CarList = () => {
             headers: token
         })
             .then(() => {
-                setSuccess(true);
-                setInfo("Pomyślnie zmieniono status dostępności auta");
+                dispatch(showSnackbar("Pomyślnie zmieniono status dostępności auta", true));
                 getCars();
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Wystąpił błąd podczas zmiany statusu dostępności auta");
+                dispatch(showSnackbar("Wystąpił błąd podczas zmiany statusu dostępności auta", false));
             })
     };
 
@@ -215,17 +196,6 @@ const CarList = () => {
                     </TableContainer>
                 </Stack>
             </Box>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

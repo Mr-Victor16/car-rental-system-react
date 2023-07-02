@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, TextField, Box, Button, Stack, Container, Alert, Snackbar } from '@mui/material';
+import { Typography, TextField, Box, Button, Stack, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {showSnackbar} from "../actions/snackbarActions";
 
 const API_URL = "http://localhost:8080/api/auth/";
 
@@ -11,10 +12,9 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
+
     let navigate = useNavigate();
+    const dispatch = useDispatch();
     const userDetails = useSelector((state) => state.userDetails);
 
     useEffect(() => {
@@ -31,27 +31,17 @@ const Register = () => {
             })
                 .catch(function(error) {
                     if(error.response.status === 401) {
-                        setInfo("Sprawdź czy wszystkie pola zostały uzupełnione poprawnie");
+                        dispatch(showSnackbar("Sprawdź czy wszystkie pola zostały uzupełnione poprawnie", false));
                     } else if(error.response.status === 409) {
-                        setInfo("Nazwa użytkownika lub/i hasło jest już zajęte");
+                        dispatch(showSnackbar("Nazwa użytkownika lub/i hasło jest już zajęte", false));
                     } else {
-                        setInfo("Wystąpił błąd podczas próby rejestracji, skontaktuj się z administratorem");
+                        dispatch(showSnackbar("Wystąpił błąd podczas próby rejestracji, skontaktuj się z administratorem", false));
                     }
-                    setError(true);
                 })
         }
         else if (password !== confirmPassword) {
-            setInfo("Hasła nie są takie same!");
-            setError(true);
+            dispatch(showSnackbar("Hasła nie są takie same", false));
         }
-    }
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
     }
 
     return (
@@ -97,17 +87,6 @@ const Register = () => {
                     <Button variant="outlined" component={Link} to="../login">Masz już konto? Zaloguj się</Button>
                 </Stack>
             </Box>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

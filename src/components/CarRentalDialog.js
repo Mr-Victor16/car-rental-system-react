@@ -1,24 +1,16 @@
 import CarRentalIcon from "@mui/icons-material/CarRental";
-import {
-    Alert,
-    Button,
-    Dialog, DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    FormGroup,
-    InputLabel, Snackbar,
-    TextField
-} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormGroup, InputLabel, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import {showSnackbar} from "../actions/snackbarActions";
 const API_URL = "http://localhost:8080/api";
 
 export default function CarRentalDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     const [openRentalDialog, setOpenRentalDialog] = useState(false);
@@ -27,9 +19,6 @@ export default function CarRentalDialog(props){
     const [carPrice] = useState(props.price);
     const [rentalCost, setRentalCost] = useState(0);
     const [carID] = useState(props.carID);
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -43,14 +32,6 @@ export default function CarRentalDialog(props){
     const handleCloseRentalDialog = () => {
         setOpenRentalDialog(false);
     };
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -79,17 +60,14 @@ export default function CarRentalDialog(props){
             headers: token
         })
             .then(async () => {
-                setError(false);
-                setSuccess(true);
-                setInfo("Pomyślnie wysłano zapytanie o wynajem auta");
-                setOpenRentalDialog(false);
-                await delay(1000);
+                dispatch(showSnackbar("Pomyślnie wysłano zapytanie o wynajem auta", true));
+                handleCloseRentalDialog();
+                await delay(2000);
                 navigate('/my-rentals');
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas wynajmu auta!");
+                dispatch(showSnackbar("Błąd podczas wysyłania zapytania o wynajem auta", false));
             })
     };
 
@@ -142,17 +120,6 @@ export default function CarRentalDialog(props){
                     <Button onClick={addCarRental}>Wynajmij</Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </div>
     );
 }

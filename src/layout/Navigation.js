@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from "../store/userDetailsReducer";
+import { logout } from "../reducers/userDetailsReducer";
 import AdminMenuList from "../components/AdminMenuList";
 
 const Navigation = () => {

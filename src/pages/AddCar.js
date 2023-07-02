@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import {
-    TextField, Typography, Box, Select, Container, FormGroup,
-    InputLabel, Button, Grid, MenuItem, Alert, Snackbar
-} from '@mui/material';
-import { useSelector } from "react-redux";
+import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem} from '@mui/material';
+import {useDispatch, useSelector} from "react-redux";
 import AuthHeader from "../services/authHeader";
+import {showSnackbar} from "../actions/snackbarActions";
 const API_URL = "http://localhost:8080/api";
 
 const AddCar = () => {
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
-
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
 
@@ -30,6 +24,7 @@ const AddCar = () => {
     const [fuelType, setFuelType] = useState(1);
 
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     useEffect(() => {
@@ -37,8 +32,7 @@ const AddCar = () => {
             axios.get(API_URL + '/fuels')
                 .then((response) => {
                     if (response.data.length === 0) {
-                        //setError(true);
-                        //setInfo("Błąd pobierania listy typów paliwa");
+                        dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
                         //await delay(2000);
                         navigate('/', {replace: true});
                     } else {
@@ -47,8 +41,7 @@ const AddCar = () => {
                 })
                 .catch(async (error) => {
                     console.log(error);
-                    // setError(true);
-                    // setInfo("Błąd pobierania listy typów paliwa");
+                    dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
                     // await delay(5000);
                     navigate('/', {replace: true});
                 })
@@ -87,18 +80,9 @@ const AddCar = () => {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
-
     const addCar = async () => {
         if(horsePower === "" || price === "" || mileage === "" || brand === "" || model === "" || capacity === "" || productionYear === ""){
-            setInfo("Nie wszystkie pola zostały wypełnione!");
-            setError(true);
+            dispatch(showSnackbar("Nie wszystkie pola zostały wypełnione", false));
         }
         else{
             axios.post(API_URL + '/car', {
@@ -114,16 +98,13 @@ const AddCar = () => {
                 headers: token,
             })
                 .then(async () => {
-                    setSuccess(true);
-                    setInfo("Pomyślnie dodano auto");
-                    await delay(5000);
+                    dispatch(showSnackbar("Pomyślnie dodano auto", true));
+                    await delay(2000);
                     navigate('/', {replace: true});
-                    setError(false);
                 })
                 .catch((error) => {
                     console.log(error);
-                    setError(true);
-                    setInfo("Błąd podczas dodawania auta!");
+                    dispatch(showSnackbar("Błąd podczas dodawania auta", false));
                 })
         }
     }
@@ -221,17 +202,6 @@ const AddCar = () => {
                     </Grid>
                 </Grid>
             </Box>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

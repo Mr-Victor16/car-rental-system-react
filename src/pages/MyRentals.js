@@ -1,33 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-    Typography, Box, Stack, Container, Alert, Snackbar, TableRow,
-    TableCell, TableHead, TableBody, Table, TableContainer, Paper
-} from '@mui/material';
-import { useSelector } from "react-redux";
+import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper} from '@mui/material';
+import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import RentalInfoDialog from "../components/RentalInfoDialog";
+import {showSnackbar} from "../actions/snackbarActions";
 
 const MyRentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
-
     const [rentals, setRentals] = useState([]);
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
 
     function getStatusName(name){
         switch(name){
@@ -58,8 +45,7 @@ const MyRentals = () => {
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas pobierania listy wynajmów");
+                dispatch(showSnackbar("Błąd podczas pobierania listy wynajmów", false));
             })
     };
 
@@ -123,17 +109,6 @@ const MyRentals = () => {
                     </TableContainer>
                 </Stack>
             </Box>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

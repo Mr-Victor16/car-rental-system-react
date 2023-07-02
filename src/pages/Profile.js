@@ -1,38 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AccountPics from "../images/blank-profile-picture.png";
-import {
-    TextField,
-    Typography,
-    Box,
-    Stack,
-    Container,
-    FormGroup,
-    InputLabel,
-    DialogContentText,
-    DialogContent,
-    DialogTitle,
-    Dialog,
-    DialogActions,
-    Button,
-    Alert,
-    Snackbar
-} from '@mui/material';
-import { useSelector } from "react-redux";
+import {TextField, Typography, Box, Stack, Container, FormGroup, InputLabel, DialogContentText, DialogContent,
+    DialogTitle, Dialog, DialogActions, Button} from '@mui/material';
+import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
+import {showSnackbar} from "../actions/snackbarActions";
 
 const Profile = () => {
     const userDetails = useSelector((state) => state.userDetails);
+    const dispatch = useDispatch();
     const token = AuthHeader();
 
     let navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const API_URL = "http://localhost:8080/api";
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -41,14 +25,6 @@ const Profile = () => {
     const handleClose = () => {
         setOpen(false);
     };
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -62,20 +38,16 @@ const Profile = () => {
                 headers: token
             })
                 .then(async () => {
-                    setSuccess(true);
-                    setInfo("Pomyślnie zmieniono hasło");
-                    await delay(4000);
+                    dispatch(showSnackbar("Pomyślnie zmieniono hasło", true));
+                    await delay(2000);
                     navigate('/', {replace: true});
-                    setError(false);
                 })
                 .catch((error) => {
                     console.log(error);
-                    setError(true);
-                    setInfo("Błąd podczas zmiany hasła!");
+                    dispatch(showSnackbar("Błąd podczas zmiany hasła", false));
                 })
         } else {
-            setError(true);
-            setInfo("Nie wprowadzono nowego hasła!");
+            dispatch(showSnackbar("Nie wprowadzono nowego hasła", false));
         }
     };
 
@@ -141,17 +113,6 @@ const Profile = () => {
                     <Button onClick={editPassword}>Zatwierdź zmianę</Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </Container>
     );
 };

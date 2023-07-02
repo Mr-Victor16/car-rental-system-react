@@ -1,19 +1,20 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import React, {useState} from "react";
 import AuthHeader from "../services/authHeader";
 import axios from "axios";
 import ImageIcon from "@mui/icons-material/Image";
+import {showSnackbar} from "../actions/snackbarActions";
+import {useDispatch} from "react-redux";
 const API_URL = "http://localhost:8080/api";
 
 export default function ChangeImageDialog(props) {
     const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
     const token = AuthHeader();
+
     const [setCars] = props.cars;
     const [carID] = useState(props.carID);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [error, setError] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [info, setInfo] = useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -22,14 +23,6 @@ export default function ChangeImageDialog(props) {
     const handleClose = () => {
         setOpen(false);
     };
-
-    const handleCloseError = async () => {
-        setError(false);
-    }
-
-    const handleCloseSuccess = async () => {
-        setSuccess(false);
-    }
 
     const onFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -42,6 +35,7 @@ export default function ChangeImageDialog(props) {
             })
             .catch((error) => {
                 console.log(error);
+                dispatch(showSnackbar("Błąd podczas pobierania listy dostępnych aut", false));
             })
     };
 
@@ -55,17 +49,14 @@ export default function ChangeImageDialog(props) {
             headers: token
         })
             .then(async () => {
-                setError(false);
-                setSuccess(true);
-                setInfo("Pomyślnie zmieniono zdjęcie");
-                setOpen(false);
-                await delay(1500);
+                dispatch(showSnackbar("Pomyślnie zmieniono zdjęcie", true));
+                await delay(2000);
+                handleClose();
                 setCars(getCarsList());
             })
             .catch((error) => {
                 console.log(error);
-                setError(true);
-                setInfo("Błąd podczas zmiany zdjęcia!");
+                dispatch(showSnackbar("Błąd podczas zmiany zdjęcia", false));
             })
     };
 
@@ -93,17 +84,6 @@ export default function ChangeImageDialog(props) {
                     <Button onClick={onFileUpload}>Zatwierdź zmianę</Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar open={error} autohideduration={6000} onClose={handleCloseError}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={success} autohideduration={6000} onClose={handleCloseSuccess}>
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {info}
-                </Alert>
-            </Snackbar>
         </>
     );
 }
