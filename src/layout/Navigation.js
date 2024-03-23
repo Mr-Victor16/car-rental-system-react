@@ -22,7 +22,7 @@ const Navigation = () => {
                     sx={{ my: 2, color: 'white', display: 'block' }}
                     to="home"
                 >
-                    Strona główna
+                    Home
                 </Button>
             </Box>
 
@@ -42,7 +42,7 @@ const Navigation = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             to="my-rentals"
                         >
-                            Moje wynajmy
+                            My rentals
                         </Button>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
@@ -51,7 +51,7 @@ const Navigation = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             to="profile"
                         >
-                            Mój profil
+                            My profile
                         </Button>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
@@ -59,7 +59,7 @@ const Navigation = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             onClick={logOut}
                         >
-                            Wyloguj się
+                            Logout
                         </Button>
                     </Box>
                 </>
@@ -71,7 +71,7 @@ const Navigation = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             to="login"
                         >
-                            Zaloguj się
+                            Login
                         </Button>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
@@ -80,7 +80,7 @@ const Navigation = () => {
                             sx={{ my: 2, color: 'white', display: 'block' }}
                             to="register"
                         >
-                            Zarejestruj się
+                            Register
                         </Button>
                     </Box>
                 </>

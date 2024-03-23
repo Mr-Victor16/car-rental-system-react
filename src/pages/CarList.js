@@ -23,13 +23,13 @@ const CarList = () => {
     function getStatusName(name){
         switch(name){
             case true: {
-                return "Tak";
+                return "Yes";
             }
             case false: {
-                return "Nie";
+                return "No";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -37,10 +37,10 @@ const CarList = () => {
     function getFuelTypeName(name){
         switch(name){
             case "FUEL_GASOLINE": {
-                return "Benzyna";
+                return "Gasoline";
             }
             case "FUEL_HYBRID": {
-                return "Hybryda";
+                return "Hybrid";
             }
             case "FUEL_LPG": {
                 return "LPG";
@@ -49,10 +49,10 @@ const CarList = () => {
                 return "Diesel";
             }
             case "FUEL_ELECTRIC": {
-                return "Elektryczny";
+                return "Electric";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -66,7 +66,7 @@ const CarList = () => {
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas pobierania listy aut", false));
+                dispatch(showSnackbar("Error while fetching the list of cars", false));
             })
     };
 
@@ -75,12 +75,12 @@ const CarList = () => {
             headers: token
         })
             .then(async () => {
-                dispatch(showSnackbar("Pomyślnie usunięto auto", true));
+                dispatch(showSnackbar("Car successfully deleted", true));
                 getCars();
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas usuwania auta", false));
+                dispatch(showSnackbar("Error occurred while deleting the car", false));
             })
     };
 
@@ -89,12 +89,12 @@ const CarList = () => {
             headers: token
         })
             .then(() => {
-                dispatch(showSnackbar("Pomyślnie zmieniono status dostępności auta", true));
+                dispatch(showSnackbar("Car availability status changed successfully", true));
                 getCars();
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Wystąpił błąd podczas zmiany statusu dostępności auta", false));
+                dispatch(showSnackbar("Error occurred while changing the availability status of the car", false));
             })
     };
 
@@ -115,14 +115,14 @@ const CarList = () => {
                 autoComplete="off"
                 marginTop={20}
             >
-                <Typography variant='h4' align='center'>Lista aut</Typography>
+                <Typography variant='h4' align='center'>Car list</Typography>
                 <Button
                     variant="contained"
                     onClick={() => {
                         navigate('/car/add')
                     }}
                 >
-                    Dodaj auto
+                    Add car
                 </Button>
                 <Stack spacing={2}>
 
@@ -131,12 +131,12 @@ const CarList = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>#</TableCell>
-                                    <TableCell align="center">Model i marka</TableCell>
-                                    <TableCell align="center">Rok produkcji</TableCell>
-                                    <TableCell align="center">Typ paliwa</TableCell>
-                                    <TableCell align="center">Cena</TableCell>
-                                    <TableCell align="center">Dostępny</TableCell>
-                                    <TableCell align="center">Akcje</TableCell>
+                                    <TableCell align="center">Brand and model</TableCell>
+                                    <TableCell align="center">Production year</TableCell>
+                                    <TableCell align="center">Fuel type</TableCell>
+                                    <TableCell align="center">Price per day</TableCell>
+                                    <TableCell align="center">Available</TableCell>
+                                    <TableCell align="center">Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -150,7 +150,7 @@ const CarList = () => {
                                             <TableCell align="center">{car.brand.name + ' ' + car.model.name}</TableCell>
                                             <TableCell align="center">{car.year}</TableCell>
                                             <TableCell align="center">{getFuelTypeName(car.fuelType.name)}</TableCell>
-                                            <TableCell align="center">{car.price + ' zł'}</TableCell>
+                                            <TableCell align="center">{car.price + ' PLN'}</TableCell>
                                             <TableCell align="center">{getStatusName(car.available)}</TableCell>
                                             <TableCell align="center">
                                                 <ChangeImageDialog carID={car.id} cars={[setCars]} />
@@ -189,7 +189,7 @@ const CarList = () => {
                                             </TableCell>
                                         </TableRow>
                                     ))) : (
-                                    <TableRow><TableCell colSpan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={8}><h2 align="center">No cars to display</h2></TableCell></TableRow>
                                 )}
                             </TableBody>
                         </Table>

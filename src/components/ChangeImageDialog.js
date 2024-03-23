@@ -5,7 +5,6 @@ import axios from "axios";
 import ImageIcon from "@mui/icons-material/Image";
 import {showSnackbar} from "../actions/snackbarActions";
 import {useDispatch} from "react-redux";
-const API_URL = "http://localhost:8080/api";
 
 export default function ChangeImageDialog(props) {
     const [open, setOpen] = useState(false);
@@ -15,6 +14,7 @@ export default function ChangeImageDialog(props) {
     const [setCars] = props.cars;
     const [carID] = useState(props.carID);
     const [selectedFile, setSelectedFile] = useState(null);
+    const API_URL = "http://localhost:8080/api";
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -35,7 +35,7 @@ export default function ChangeImageDialog(props) {
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas pobierania listy dostępnych aut", false));
+                dispatch(showSnackbar("Error occurred while fetching the list of available cars. Please contact the administrator", false));
             })
     };
 
@@ -49,14 +49,14 @@ export default function ChangeImageDialog(props) {
             headers: token
         })
             .then(async () => {
-                dispatch(showSnackbar("Pomyślnie zmieniono zdjęcie", true));
+                dispatch(showSnackbar("Car photo successfully changed", true));
                 await delay(2000);
                 handleClose();
                 setCars(getCarsList());
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas zmiany zdjęcia", false));
+                dispatch(showSnackbar("Error occurred while changing the car photo", false));
             })
     };
 
@@ -73,15 +73,15 @@ export default function ChangeImageDialog(props) {
             </Button>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Zmień zdjęcie</DialogTitle>
+                <DialogTitle>Change car photo</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Wybierz nowe zdjęcie auta, a następnie zatwierdź zmiany przyciskiem.
+                        Select a new car photo, then confirm the changes with the button
                     </DialogContentText>
                     <input type="file" accept="image/*" onChange={onFileChange} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onFileUpload}>Zatwierdź zmianę</Button>
+                    <Button onClick={onFileUpload}>Confirm changes</Button>
                 </DialogActions>
             </Dialog>
         </>

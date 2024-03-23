@@ -33,10 +33,10 @@ export default function CarInfoDialog(props){
     function getFuelTypeName(name){
         switch(name){
             case "FUEL_GASOLINE": {
-                return "Benzyna";
+                return "Gasoline";
             }
             case "FUEL_HYBRID": {
-                return "Hybryda";
+                return "Hybrid";
             }
             case "FUEL_LPG": {
                 return "LPG";
@@ -45,10 +45,10 @@ export default function CarInfoDialog(props){
                 return "Diesel";
             }
             case "FUEL_ELECTRIC": {
-                return "Elektryczny";
+                return "Electric";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -79,14 +79,14 @@ export default function CarInfoDialog(props){
                             />
                         </Grid>
 
-                        <GridItem xs={4} md={6} icon={<FuelIcon />} primaryText={"Paliwo"} secondaryText={getFuelTypeName(car.fuelType.name)} />
-                        <GridItem xs={4} md={6} icon={<ServiceIcon />} primaryText={"Przebieg"} secondaryText={car.mileage + ' km'} />
-                        <GridItem xs={4} md={6} icon={<CarIcon />} primaryText={"Silnik"} secondaryText={car.capacity + ', ' + car.horsePower + ' KM'} />
-                        <GridItem xs={4} md={6} icon={<MoneyIcon />} primaryText={"Cena"} secondaryText={car.price + ' zł'} />
+                        <GridItem xs={4} md={6} icon={<FuelIcon />} primaryText={"Fuel"} secondaryText={getFuelTypeName(car.fuelType.name)} />
+                        <GridItem xs={4} md={6} icon={<ServiceIcon />} primaryText={"Mileage"} secondaryText={car.mileage + ' km'} />
+                        <GridItem xs={4} md={6} icon={<CarIcon />} primaryText={"Engine"} secondaryText={car.capacity + ', ' + car.horsePower + ' HP'} />
+                        <GridItem xs={4} md={6} icon={<MoneyIcon />} primaryText={"Price per day"} secondaryText={car.price + ' PLN'} />
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Zamknij</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>

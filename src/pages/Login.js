@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Typography, TextField, Box, Button, Stack, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../reducers/userDetailsReducer';
 import {showSnackbar} from "../actions/snackbarActions";
-
-const API_URL = "http://localhost:8080/api/auth/";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const userDetails = useSelector((state) => state.userDetails);
+    const API_URL = "http://localhost:8080/api/auth/";
 
     useEffect(() => {
         if (userDetails.token !== "") {
@@ -22,24 +20,46 @@ const Login = () => {
         }
     });
 
-    const logIn = async () => {
-        axios.post(API_URL + "signin", { username,password })
-        .then(response => {
-            if (response.data.token) {
-                dispatch(login(response.data));
-            }
+    const validationSchema = Yup.object({
+        username: Yup
+            .string()
+            .required("Username field cannot be empty"),
+        password: Yup
+            .string()
+            .required("Password field cannot be empty"),
+    });
 
-            navigate('/', { replace: true });
-        })
-        .catch(function(error) {
-            if(error.response.status === 401) {
-                dispatch(showSnackbar("Wprowadzono błędne dane logowania", false));
-            } else if(error.response.status === 404){
-                dispatch(showSnackbar("Użytkownik o podanej nazwie użytkownika, nie istnieje", false));
-            } else {
-                dispatch(showSnackbar("Wystąpił błąd podczas próby logowania, skontaktuj się z administratorem", false));
-            }
-        })
+    const formik = useFormik({
+        initialValues: {
+            username: "",
+            password: "",
+        },
+        validationSchema: validationSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
+    const logIn = async () => {
+        if(formik.values.username !== "" && formik.values.password !== ""){
+            axios.post(API_URL + "signin", { username: formik.values.username, password: formik.values.password })
+                .then(response => {
+                    if (response.data.token) {
+                        dispatch(login(response.data));
+                    }
+
+                    navigate('/', { replace: true });
+                })
+                .catch(function(error) {
+                    if(error.response.status === 401) {
+                        dispatch(showSnackbar("Incorrect login credentials", false));
+                    } else {
+                        dispatch(showSnackbar("Error occurred during login attempt, please contact the administrator", false));
+                    }
+                })
+        } else {
+            dispatch(showSnackbar("You need to enter your login credentials", false));
+        }
     }
 
     return (
@@ -52,23 +72,33 @@ const Login = () => {
                 marginTop={20}
             >
                 <Stack spacing={2}>
-                    <Typography variant='h3' align='center'>Logowanie</Typography>
+                    <Typography variant='h3' align='center'>Login</Typography>
 
                     <TextField
-                        required
-                        label="Nazwa użytkownika"
-                        onChange={(e) => setUsername(e.target.value)}
+                        id={"username"}
+                        name={"username"}
+                        value={formik.values.username}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.username && Boolean(formik.errors.username)}
+                        helperText={formik.touched.username && formik.errors.username}
+                        label="Username"
                     />
 
                     <TextField
-                        required
-                        label="Hasło"
-                        type="password"
-                        onChange={(e) => setPassword(e.target.value)}
+                        id={"password"}
+                        name={"password"}
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.password && Boolean(formik.errors.password)}
+                        helperText={formik.touched.password && formik.errors.password}
+                        label="Password"
+                        type={"password"}
                     />
-                
-                    <Button variant="contained" onClick={logIn}>Zaloguj się</Button>
-                    <Button variant="outlined" component={Link} to="../register">Załóż konto</Button>
+
+                    <Button variant="contained" onClick={logIn}>Log in</Button>
+                    <Button variant="outlined" component={Link} to="../register">Create an account</Button>
                 </Stack>
             </Box>
         </Container>

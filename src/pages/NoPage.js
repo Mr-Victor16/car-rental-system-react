@@ -4,7 +4,7 @@ import React from "react";
 const NoPage = () => {
     return (
         <Box marginTop={20}>
-            <Typography variant='h4' align='center'>Strona o podanym adresie nie istnieje!</Typography>
+            <Typography variant='h5' align='center'>Page at the provided address doesn't exist!</Typography>
         </Box>
     );
 };

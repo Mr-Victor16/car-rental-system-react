@@ -10,7 +10,7 @@ import AuthHeader from "../services/authHeader";
 import ChangeImageDialog from "../components/ChangeImageDialog";
 import CarRentalDialog from "../components/CarRentalDialog";
 import {showSnackbar} from "../actions/snackbarActions";
-const API_URL = "http://localhost:8080/api";
+
 
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -19,6 +19,7 @@ const Home = () => {
 
     const [cars, setCars] = useState([]);
     let navigate = useNavigate();
+    const API_URL = "http://localhost:8080/api";
 
     useEffect(() => {
         getCarsList();
@@ -31,7 +32,7 @@ const Home = () => {
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Wystąpił błąd podczas pobierania listy dostępnych aut", false));
+                dispatch(showSnackbar("Error occurred while fetching the list of available cars. Please contact the administrator", false));
             })
     };
 
@@ -48,22 +49,22 @@ const Home = () => {
             headers: token
         })
             .then(async () => {
-                dispatch(showSnackbar("Pomyślnie usunięto auto", true));
+                dispatch(showSnackbar("Car successfully deleted", true));
                 await getCarsList();
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas usuwania auta", false));
+                dispatch(showSnackbar("Error occurred while deleting the car", false));
             })
     };
 
     function getFuelTypeName(name){
         switch(name){
             case "FUEL_GASOLINE": {
-                return "Benzyna";
+                return "Gasoline";
             }
             case "FUEL_HYBRID": {
-                return "Hybryda";
+                return "Hybrid";
             }
             case "FUEL_LPG": {
                 return "LPG";
@@ -72,10 +73,10 @@ const Home = () => {
                 return "Diesel";
             }
             case "FUEL_ELECTRIC": {
-                return "Elektryczny";
+                return "Electric";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -99,10 +100,10 @@ const Home = () => {
                                             {car.brand.name + " " + car.model.name + " (" + car.year + ")"}
                                         </Typography>
                                         <Stack spacing={2}>
-                                            <Item>Przebieg: {car.mileage} km</Item>
-                                            <Item>Silnik: {car.capacity + ", " + car.horsePower + "KM"}</Item>
-                                            <Item>Paliwo: {getFuelTypeName(car.fuelType.name)}</Item>
-                                            <Item>Cena za dobę: {car.price + "zł"}</Item>
+                                            <Item>Mileage: {car.mileage} km</Item>
+                                            <Item>Engine: {car.capacity + ", " + car.horsePower + " HP"}</Item>
+                                            <Item>Fuel: {getFuelTypeName(car.fuelType.name)}</Item>
+                                            <Item>Price per day: {car.price + " PLN"}</Item>
                                         </Stack>
                                     </CardContent>
                                     <CardActions style={{justifyContent: 'center'}}>
@@ -143,7 +144,7 @@ const Home = () => {
                     })
                 ) : (
                     <Grid item xs={12} marginTop={20}>
-                        <Typography variant='h4' align='center'>Brak danych do wyświetlenia</Typography>
+                        <Typography variant='h5' align='center'>No cars available for display</Typography>
                     </Grid>
                 )}
             </Grid>
