@@ -7,6 +7,8 @@ import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 const Profile = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -15,7 +17,6 @@ const Profile = () => {
 
     let navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const [newPassword, setNewPassword] = useState('');
     const API_URL = "http://localhost:8080/api";
 
     const handleClickOpen = () => {
@@ -28,26 +29,56 @@ const Profile = () => {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    const validationSchema = Yup.object({
+        newPassword: Yup.string()
+            .required("Password field cannot be empty")
+            .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+            .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
+        oldPassword: Yup.string()
+            .required("Password field cannot be empty"),
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            newPassword: "",
+            oldPassword: "",
+        },
+        validationSchema: validationSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
     const editPassword = () => {
-        if(newPassword !== ""){
+        if(formik.values.oldPassword !== "" && formik.values.newPassword !== ""){
             setOpen(false);
 
-            axios.put(API_URL + '/profile/' + userDetails.id + '/password', {
-                newPassword: newPassword,
+            axios.put(API_URL + '/user/changePassword', {
+                userID: userDetails.id,
+                oldPassword: formik.values.oldPassword,
+                newPassword: formik.values.newPassword,
             },{
                 headers: token
             })
                 .then(async () => {
-                    dispatch(showSnackbar("Pomyślnie zmieniono hasło", true));
+                    dispatch(showSnackbar("Password successfully changed", true));
                     await delay(2000);
                     navigate('/', {replace: true});
                 })
                 .catch((error) => {
                     console.log(error);
-                    dispatch(showSnackbar("Błąd podczas zmiany hasła", false));
+                    if (error.response.status === 422) {
+                        dispatch(showSnackbar("Actually and new password cannot be the same", false));
+                    } else if (error.response.status === 403) {
+                        dispatch(showSnackbar("Incorrect current password", false));
+                    } else if (error.response.status === 404) {
+                        dispatch(showSnackbar("Error occurred while changing the password. The specified user doesn't exist", false));
+                    } else {
+                        dispatch(showSnackbar("Error occurred while changing the password. Please contact the administrator", false));
+                    }
                 })
         } else {
-            dispatch(showSnackbar("Nie wprowadzono nowego hasła", false));
+            dispatch(showSnackbar("You must fill in all fields", false));
         }
     };
 
@@ -78,7 +109,7 @@ const Profile = () => {
 
                     <FormGroup>
                         <InputLabel>
-                            Adres e-mail
+                            E-mail address
                         </InputLabel>
                         <TextField
                             value={userDetails.email}
@@ -86,31 +117,47 @@ const Profile = () => {
                         />
                     </FormGroup>
                     
-                    <Button variant="contained" onClick={handleClickOpen}>Zmień hasło</Button>
+                    <Button variant="contained" onClick={handleClickOpen}>Change password</Button>
                 </Stack>
             </Box>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Zmień hasło</DialogTitle>
+                <DialogTitle>Change password</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Podaj nowe hasło, a następnie zatwierdź zmiany przyciskiem.
+                        Enter current and new password, then confirm the changes with the button
                     </DialogContentText>
                     <TextField
-                        autoFocus
+                        id={"oldPassword"}
+                        name={"oldPassword"}
+                        value={formik.values.oldPassword}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.oldPassword && Boolean(formik.errors.oldPassword)}
+                        helperText={formik.touched.oldPassword && formik.errors.oldPassword}
+                        type={"password"}
+                        label="Current password"
                         margin="dense"
-                        id="password"
-                        label="Nowe hasło"
-                        type="password"
-                        fullWidth
                         variant="standard"
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        value={newPassword}
-                        required
+                        fullWidth
+                    />
+                    <TextField
+                        id={"newPassword"}
+                        name={"newPassword"}
+                        value={formik.values.newPassword}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
+                        helperText={formik.touched.newPassword && formik.errors.newPassword}
+                        type={"password"}
+                        label="New password"
+                        margin="dense"
+                        variant="standard"
+                        fullWidth
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={editPassword}>Zatwierdź zmianę</Button>
+                    <Button onClick={editPassword}>Confirm changes</Button>
                 </DialogActions>
             </Dialog>
         </Container>

@@ -21,11 +21,9 @@ const Login = () => {
     });
 
     const validationSchema = Yup.object({
-        username: Yup
-            .string()
+        username: Yup.string()
             .required("Username field cannot be empty"),
-        password: Yup
-            .string()
+        password: Yup.string()
             .required("Password field cannot be empty"),
     });
 
