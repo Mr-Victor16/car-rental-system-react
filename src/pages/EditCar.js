@@ -1,28 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useNavigate, useParams} from 'react-router-dom';
-import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem} from '@mui/material';
+import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
-const API_URL = "http://localhost:8080/api";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 const EditCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
+    const API_URL = "http://localhost:8080/api";
     let { id } = useParams();
 
     const currentTime = new Date();
     const maxYear = currentTime.getFullYear();
-    const [productionYear, setProductionYear] = useState(currentTime.getFullYear());
-
-    const [horsePower, setHorsePower] = useState(1);
-    const [price, setPrice] = useState(1);
-    const [mileage, setMileage] = useState(0);
-    const [brand, setBrand] = useState("");
-    const [model, setModel] = useState("");
-    const [capacity, setCapacity] = useState("");
-    const [fuelType, setFuelType] = useState(1);
 
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
@@ -40,23 +33,23 @@ const EditCar = () => {
             })
                 .then(async (response) => {
                     if(response.data.length === 0){
-                        dispatch(showSnackbar("Nie znaleziono wskazanego auta", false));
+                        dispatch(showSnackbar("The specified car was not found", false));
                         await delay(2000);
                         navigate("../car/add");
                     } else {
-                        setHorsePower(response.data.horsePower);
-                        setPrice(response.data.price);
-                        setMileage(response.data.mileage);
-                        setBrand(response.data.brand.name);
-                        setModel(response.data.model.name);
-                        setCapacity(response.data.capacity);
-                        setFuelType(response.data.fuelType.id);
-                        setProductionYear(response.data.year);
+                        formik.values.horsePower=response.data.horsePower;
+                        formik.values.price=response.data.price;
+                        formik.values.mileage=response.data.mileage;
+                        formik.values.brand=response.data.brand.name;
+                        formik.values.model=response.data.model.name;
+                        formik.values.capacity=response.data.capacity;
+                        formik.values.fuelType=response.data.fuelType.id;
+                        formik.values.year=response.data.year;
                     }
                 })
                 .catch(async (error) => {
                     console.log(error);
-                    dispatch(showSnackbar("Błąd pobierania danych o aucie", false));
+                    dispatch(showSnackbar("Error occurred while retrieving car information", false));
                     await delay(2000);
                     navigate('/', {replace: true});
                 })
@@ -69,7 +62,7 @@ const EditCar = () => {
         axios.get(API_URL + '/fuels')
             .then((response) => {
                 if (response.data.length === 0) {
-                    dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
+                    dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
                     //await delay(2000);
                     navigate('/', {replace: true});
                 } else {
@@ -78,24 +71,19 @@ const EditCar = () => {
             })
             .catch(async (error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd pobierania listy typów paliwa", false));
+                dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
                 //await delay(2000);
                 navigate('/', {replace: true});
             })
     };
 
-    const handleChangeProductionYear = event => {
-        const value = Math.max(1970, Math.min(maxYear, Number(event.target.value)));
-        setProductionYear(value);
-    };
-
     function getFuelTypeName(name){
         switch(name){
             case "FUEL_GASOLINE": {
-                return "Benzyna";
+                return "Gasoline";
             }
             case "FUEL_HYBRID": {
-                return "Hybryda";
+                return "Hybrid";
             }
             case "FUEL_LPG": {
                 return "LPG";
@@ -104,42 +92,92 @@ const EditCar = () => {
                 return "Diesel";
             }
             case "FUEL_ELECTRIC": {
-                return "Elektryczny";
+                return "Electric";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
 
+    const validationSchema = Yup.object({
+        horsePower: Yup.number()
+            .min(50, "The value of the car's horsepower is too small (min. is 50)")
+            .required("Horse power field cannot be empty"),
+        price: Yup.number()
+            .min(50, "The daily rental amount for the car is too small (min. is 50 zł)")
+            .required("Price field cannot be empty"),
+        year: Yup.number()
+            .min(1970, "The value for the car's production year is too small (min. is 1970)")
+            .max(maxYear, "The car's production year is higher than the current year")
+            .required("Production year field cannot be empty"),
+        mileage: Yup.number()
+            .min(1, "The mileage value for the car must be at least 1 km")
+            .required("Mileage field cannot be empty"),
+        brand: Yup.string()
+            .min(3, "Brand name is too short")
+            .max(30, "Brand name is too long")
+            .required("Brand field cannot be empty"),
+        model: Yup.string()
+            .min(2, "Model name is too short")
+            .max(30, "Model name is too long")
+            .required("Model field cannot be empty"),
+        capacity: Yup.string()
+            .required("Capacity field cannot be empty"),
+        fuelType: Yup.number()
+            .required("You must select a fuel type")
+            .min(1)
+            .max(fuelList.length)
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            horsePower: 50,
+            price: 50,
+            year: maxYear,
+            mileage: 1,
+            brand: "",
+            model: "",
+            capacity: "",
+            fuelType: ""
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const editCar = async () => {
-        if(horsePower === "" || price === "" || mileage === "" || brand === "" || model === "" || capacity === "" || productionYear === ""){
-            dispatch(showSnackbar("Nie wszystkie pola zostały wypełnione!", false));
-        }
-        else{
-            axios.put(API_URL + '/car/'+id, {
-                horsePower: horsePower,
-                price: price,
-                mileage: mileage,
-                brand: brand,
-                model: model,
-                capacity: capacity,
-                fuelType: fuelType,
-                year: productionYear,
-            },{
+        if(formik.values.horsePower !== "" && formik.values.price !== "" && formik.values.mileage !== "" && formik.values.brand !== "" && formik.values.model !== "" && formik.values.capacity !== "" && formik.values.year !== '' && formik.values.fuelType !== "") {
+            axios.put(API_URL + '/car/' + id, {
+                horsePower: formik.values.horsePower,
+                price: formik.values.price,
+                year: formik.values.year,
+                mileage: formik.values.mileage,
+                brand: formik.values.brand,
+                model: formik.values.model,
+                capacity: formik.values.capacity,
+                fuelType: formik.values.fuelType
+            }, {
                 headers: token,
             })
                 .then(async () => {
-                    dispatch(showSnackbar("Pomyślnie zmieniono informacje o aucie", true));
+                    dispatch(showSnackbar("Car information has been successfully updated", true));
                     await delay(2000);
                     navigate('/', {replace: true});
                 })
                 .catch((error) => {
                     console.log(error);
-                    dispatch(showSnackbar("Błąd podczas zmiany danych auta", false));
+                    if (error.response.status === 404) {
+                        dispatch(showSnackbar("The specified car was not found", false));
+                    } else {
+                        dispatch(showSnackbar("Error occurred while updating car information", false));
+                    }
                 })
+        } else {
+            dispatch(showSnackbar("Not all fields have been completed", false));
         }
     }
 
@@ -154,72 +192,127 @@ const EditCar = () => {
             >
                 <Grid container spacing={2}>
                     <Grid item xs={12} alignItems={"center"}>
-                        <Typography variant='h3' align='center'>Edytuj informacje o aucie</Typography>
+                        <Typography variant='h4' align='center'>Edit car information</Typography>
                     </Grid>
                     <Grid item xs={6}>
                         <FormGroup>
-                            <InputLabel> Marka </InputLabel>
-                            <TextField value={brand} onChange={(e) => setBrand(e.target.value)} />
-                        </FormGroup>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormGroup>
-                            <InputLabel> Model </InputLabel>
-                            <TextField value={model} onChange={(e) => setModel(e.target.value)} />
-                        </FormGroup>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormGroup>
-                            <InputLabel> Pojemność </InputLabel>
-                            <TextField placeholder="np. 1.9" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
-                        </FormGroup>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormGroup>
-                            <InputLabel> Konie mechaniczne </InputLabel>
                             <TextField
-                                type={"number"}
-                                InputProps={{ inputProps: { min: 1, max: 1000 } }}
-                                value={horsePower}
-                                onChange={(e) => setHorsePower( e.target.value)}
+                                id={"brand"}
+                                name={"brand"}
+                                value={formik.values.brand}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.brand && Boolean(formik.errors.brand)}
+                                helperText={formik.touched.brand && formik.errors.brand}
+                                label="Brand"
                             />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={6}>
                         <FormGroup>
-                            <InputLabel> Rok produkcji </InputLabel>
-                            <TextField type={"number"} onChange={handleChangeProductionYear} value={productionYear} />
-                        </FormGroup>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormGroup>
-                            <InputLabel> Przebieg </InputLabel>
                             <TextField
-                                type={"number"}
-                                InputProps={{ inputProps: { min: 0 } }}
-                                onChange={(e) => setMileage(e.target.value)}
-                                value={mileage}
+                                id={"model"}
+                                name={"model"}
+                                value={formik.values.model}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.model && Boolean(formik.errors.model)}
+                                helperText={formik.touched.model && formik.errors.model}
+                                label="Model"
                             />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={6}>
                         <FormGroup>
-                            <InputLabel> Koszt wynajmu za dobę </InputLabel>
                             <TextField
-                                type={"number"}
-                                InputProps={{ inputProps: { min: 1, max:100 } }}
-                                onChange={(e) => setPrice(e.target.value)}
-                                value={price}
+                                id={"capacity"}
+                                name={"capacity"}
+                                value={formik.values.capacity}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.capacity && Boolean(formik.errors.capacity)}
+                                helperText={formik.touched.capacity && formik.errors.capacity}
+                                label="Capacity"
+                                placeholder="e.g. '2.0 TFSI'"
                             />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={6}>
                         <FormGroup>
-                            <InputLabel>Typ paliwa</InputLabel>
+                            <TextField
+                                id={"horsePower"}
+                                name={"horsePower"}
+                                type={"number"}
+                                InputProps={{ inputProps: { min: 50 } }}
+                                value={formik.values.horsePower}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.horsePower && Boolean(formik.errors.horsePower)}
+                                helperText={formik.touched.horsePower && formik.errors.horsePower}
+                                label="Horse power"
+                            />
+                        </FormGroup>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormGroup>
+                            <TextField
+                                id={"year"}
+                                name={"year"}
+                                type={"number"}
+                                InputProps={{ inputProps: { min: 1970, max: maxYear } }}
+                                value={formik.values.year}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.year && Boolean(formik.errors.year)}
+                                helperText={formik.touched.year && formik.errors.year}
+                                label="Production year"
+                            />
+                        </FormGroup>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormGroup>
+                            <TextField
+                                id={"mileage"}
+                                name={"mileage"}
+                                type={"number"}
+                                InputProps={{ inputProps: { min: 1 } }}
+                                value={formik.values.mileage}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.mileage && Boolean(formik.errors.mileage)}
+                                helperText={formik.touched.mileage && formik.errors.mileage}
+                                label="Mileage"
+                            />
+                        </FormGroup>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormGroup>
+                            <TextField
+                                id={"price"}
+                                name={"price"}
+                                type={"number"}
+                                InputProps={{ inputProps: { min: 50 } }}
+                                value={formik.values.price}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.price && Boolean(formik.errors.price)}
+                                helperText={formik.touched.price && formik.errors.price}
+                                label="Price per day"
+                            />
+                        </FormGroup>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>Fuel type</InputLabel>
                             <Select
-                                value={fuelType}
-                                onChange={(e) => setFuelType(e.target.value)}
-                                required
+                                label="Fuel type"
+                                id={"fuelType"}
+                                name={"fuelType"}
+                                value={formik.values.fuelType}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.fuelType && Boolean(formik.errors.fuelType)}
+                                helperText={formik.touched.fuelType && formik.errors.fuelType}
                             >
                                 { fuelList && fuelList.length > 0 && (
                                     fuelList.map((fuel, index) => {
@@ -229,10 +322,13 @@ const EditCar = () => {
                                     })
                                 )}
                             </Select>
-                        </FormGroup>
+                            {formik.touched.fuelType && Boolean(formik.errors.fuelType) && (
+                                <FormHelperText>{formik.touched.fuelType && formik.errors.fuelType}</FormHelperText>
+                            )}
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={editCar} fullWidth>Zapisz zmiany</Button>
+                        <Button variant="contained" onClick={editCar} fullWidth>Save changes</Button>
                     </Grid>
                 </Grid>
             </Box>
