@@ -4,11 +4,11 @@ import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, Table
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
-import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
 import RentalInfoDialog from "../components/RentalInfoDialog";
 import ChangeRentalStatusDialog from "../components/ChangeRentalStatusDialog";
 import {showSnackbar} from "../actions/snackbarActions";
+import ChangeCarRentalDialog from "../components/ChangeCarRentalDialog";
 
 const Rentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -23,19 +23,19 @@ const Rentals = () => {
     function getStatusName(name){
         switch(name){
             case "STATUS_PENDING": {
-                return "Przetwarzanie";
+                return "Pending";
             }
             case "STATUS_ACCEPTED": {
-                return "Zaakceptowany";
+                return "Accepted";
             }
             case "STATUS_REJECTED": {
-                return "Odrzucony";
+                return "Rejected";
             }
             case "STATUS_CANCELLED": {
-                return "Anulowany";
+                return "Cancelled";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -49,7 +49,7 @@ const Rentals = () => {
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas pobierania listy wynajmów", false));
+                dispatch(showSnackbar("Error occurred while fetching the list of rentals", false));
             })
     };
 
@@ -58,12 +58,12 @@ const Rentals = () => {
             headers: token
         })
             .then(async () => {
-                dispatch(showSnackbar("Pomyślnie usunięto wynajem", true));
+                dispatch(showSnackbar("Rental deleted successfully", true));
                 getRentals();
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas usuwania wynajmu", false));
+                dispatch(showSnackbar("Error occurred while deleting the rental", false));
             })
     };
 
@@ -80,7 +80,7 @@ const Rentals = () => {
         axios.get(API_URL + '/rental-statuses')
             .then((response) => {
                 if (response.data.length === 0) {
-                    dispatch(showSnackbar("Błąd pobierania statusów wynajmu", false));
+                    dispatch(showSnackbar("Error occurred while retrieving the list of rental statuses", false));
                     navigate('/', {replace: true});
                 } else {
                     setStatusList(response.data);
@@ -88,7 +88,7 @@ const Rentals = () => {
             })
             .catch(async (error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd pobierania statusów wynajmu", false));
+                dispatch(showSnackbar("Error occurred while retrieving the list of rental statuses", false));
                 //await delay(2000);
                 navigate('/', {replace: true});
             })
@@ -104,20 +104,20 @@ const Rentals = () => {
                 marginTop={20}
             >
                 <Stack spacing={2}>
-                    <Typography variant='h4' align='center'>Lista wynajmów</Typography>
+                    <Typography variant='h4' align='center'>Rental list</Typography>
 
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell>#</TableCell>
-                                    <TableCell align="center">Data utworzenia</TableCell>
-                                    <TableCell align="center">Okres wynajmu</TableCell>
-                                    <TableCell align="center">Auto</TableCell>
+                                    <TableCell align="center">Date created</TableCell>
+                                    <TableCell align="center">Rental period</TableCell>
+                                    <TableCell align="center">Car</TableCell>
                                     <TableCell align="center">Status</TableCell>
-                                    <TableCell align="center">Koszt</TableCell>
-                                    <TableCell align="center">Klient</TableCell>
-                                    <TableCell align="center">Akcje</TableCell>
+                                    <TableCell align="center">Cost</TableCell>
+                                    <TableCell align="center">Customer</TableCell>
+                                    <TableCell align="center">Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -127,7 +127,6 @@ const Rentals = () => {
                                         key={rental.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-
                                         <TableCell component="th" scope="row">
                                             {index+1}
                                         </TableCell>
@@ -135,7 +134,7 @@ const Rentals = () => {
                                         <TableCell align="center">{rental.startDate + ' - ' + rental.endDate}</TableCell>
                                         <TableCell align="center">{rental.car.brand.name + ' ' + rental.car.model.name}</TableCell>
                                         <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
-                                        <TableCell align="center">{rental.price + ' zł'}</TableCell>
+                                        <TableCell align="center">{rental.price + ' PLN'}</TableCell>
                                         <TableCell align="center">{rental.user.username}</TableCell>
                                         <TableCell align="center">
                                             <RentalInfoDialog statusHistory={rental.statusHistory} />
@@ -147,12 +146,12 @@ const Rentals = () => {
                                                 rentalID={rental.id}
                                             />
                                             &nbsp;
-                                            <Button
-                                                variant="contained"
-                                                color="warning"
-                                            >
-                                                <EditIcon fontSize="small" />
-                                            </Button>
+                                            <ChangeCarRentalDialog
+                                                rentalID={rental.id}
+                                                startDate={rental.startDate}
+                                                endDate={rental.endDate}
+                                                carPrice={rental.car.price}
+                                            />
                                             &nbsp;
                                             <Button
                                                 variant="contained"
@@ -166,7 +165,7 @@ const Rentals = () => {
                                         </TableCell>
                                     </TableRow>
                                 ))) : (
-                                    <TableRow><TableCell colSpan={8}><h2 align="center">Brak danych do wyświetlenia</h2></TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={8}><h2 align="center">No rentals to display</h2></TableCell></TableRow>
                                 )}
                             </TableBody>
                         </Table>

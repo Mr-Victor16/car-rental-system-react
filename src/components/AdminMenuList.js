@@ -75,9 +75,9 @@ export default function AdminMenuList() {
                                         aria-labelledby="composition-button"
                                         onKeyDown={handleListKeyDown}
                                     >
-                                        <MenuItem onClick={handleClose} component={Link} to="car/list">Lista aut</MenuItem>
-                                        <MenuItem onClick={handleClose} component={Link} to="rentals">Lista wynajmów</MenuItem>
-                                        <MenuItem onClick={handleClose}>Zarządzanie użytkownikami</MenuItem>
+                                        <MenuItem onClick={handleClose} component={Link} to="car/list">Car list</MenuItem>
+                                        <MenuItem onClick={handleClose} component={Link} to="rentals">Rental list</MenuItem>
+                                        <MenuItem onClick={handleClose} component={Link} to="users">User management</MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
                             </Paper>

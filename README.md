@@ -9,6 +9,7 @@ The backend for this project can be found in the repository - [car-rental-system
 + Axios
 + Redux
 + Node.js
++ Formik, Yup
 
 ## How to launch?
 + Use the following command to install the required modules:  

@@ -312,7 +312,6 @@ const EditCar = () => {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 error={formik.touched.fuelType && Boolean(formik.errors.fuelType)}
-                                helperText={formik.touched.fuelType && formik.errors.fuelType}
                             >
                                 { fuelList && fuelList.length > 0 && (
                                     fuelList.map((fuel, index) => {

@@ -41,7 +41,7 @@ const MyRentals = () => {
             headers: token
         })
             .then((response) => {
-                setRentals(response.data)
+                setRentals(response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -55,7 +55,7 @@ const MyRentals = () => {
         } else {
             getRentals();
         }
-    },[userDetails.token]);
+    }, [userDetails.token]);
 
     return (
         <Container maxWidth="lg">

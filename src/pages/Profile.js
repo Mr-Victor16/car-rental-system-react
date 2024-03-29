@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AccountPics from "../images/blank-profile-picture.png";
-import {TextField, Typography, Box, Stack, Container, FormGroup, InputLabel, DialogContentText, DialogContent,
-    DialogTitle, Dialog, DialogActions, Button} from '@mui/material';
+import {TextField, Typography, Box, Stack, Container, FormGroup, InputLabel, DialogContentText, DialogContent, DialogTitle, Dialog, DialogActions, Button} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
@@ -51,8 +50,6 @@ const Profile = () => {
 
     const editPassword = () => {
         if(formik.values.oldPassword !== "" && formik.values.newPassword !== ""){
-            setOpen(false);
-
             axios.put(API_URL + '/user/changePassword', {
                 userID: userDetails.id,
                 oldPassword: formik.values.oldPassword,
@@ -61,6 +58,7 @@ const Profile = () => {
                 headers: token
             })
                 .then(async () => {
+                    setOpen(false);
                     dispatch(showSnackbar("Password successfully changed", true));
                     await delay(2000);
                     navigate('/', {replace: true});

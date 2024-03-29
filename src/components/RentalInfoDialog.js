@@ -12,7 +12,7 @@ export default function RentalInfoDialog(props){
     let navigate = useNavigate();
 
     useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
+        if (userDetails.token === "") {
             navigate('/', {replace: true});
         }
     },[userDetails.token]);
@@ -28,19 +28,19 @@ export default function RentalInfoDialog(props){
     function getStatusName(name){
         switch(name){
             case "STATUS_PENDING": {
-                return "Przetwarzanie";
+                return "Pending";
             }
             case "STATUS_ACCEPTED": {
-                return "Zaakceptowany";
+                return "Accepted";
             }
             case "STATUS_REJECTED": {
-                return "Odrzucony";
+                return "Rejected";
             }
             case "STATUS_CANCELLED": {
-                return "Anulowany";
+                return "Cancelled";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -58,7 +58,7 @@ export default function RentalInfoDialog(props){
             </Button>
 
             <Dialog open={openDialog} onClose={handleClose} maxWidth={"xs"} fullWidth>
-                <DialogTitle>Historia zmian statusu</DialogTitle>
+                <DialogTitle>Status change history</DialogTitle>
 
                 <DialogContent>
                     <List
@@ -79,13 +79,13 @@ export default function RentalInfoDialog(props){
                             ))
                         ) : (
                             <ListItem>
-                                <ListItemText align="center" primary={"Brak danych do wyświetlenia"} />
+                                <ListItemText align="center" primary={"No data to display"} />
                             </ListItem>
                         )}
                     </List>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Zamknij</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>

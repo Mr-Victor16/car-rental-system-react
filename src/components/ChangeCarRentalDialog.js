@@ -1,24 +1,23 @@
-import CarRentalIcon from "@mui/icons-material/CarRental";
+import EditIcon from "@mui/icons-material/Edit";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormGroup, InputLabel, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {showSnackbar} from "../actions/snackbarActions";
 
-export default function CarRentalDialog(props){
-    const userDetails = useSelector((state) => state.userDetails);
+export default function ChangeCarRentalDialog(props){
     const dispatch = useDispatch();
     const token = AuthHeader();
     const API_URL = "http://localhost:8080/api";
 
     const [openRentalDialog, setOpenRentalDialog] = useState(false);
-    const [rentalStartDate, setRentalStartDate] = useState(new Date().toISOString().slice(0, 10));
-    const [rentalEndDate, setRentalEndDate] = useState(new Date().toISOString().slice(0, 10));
-    const [carPrice] = useState(props.price);
+    const [rentalStartDate, setRentalStartDate] = useState(props.startDate);
+    const [rentalEndDate, setRentalEndDate] = useState(props.endDate);
+    const [carPrice] = useState(props.carPrice);
     const [rentalCost, setRentalCost] = useState(0);
-    const [carID] = useState(props.carID);
+    const [rentalID] = useState(props.rentalID);
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -49,47 +48,45 @@ export default function CarRentalDialog(props){
         }
     };
 
-    const addCarRental = async () => {
-        axios.post(API_URL + '/rental', {
-            carID: carID,
-            userID: userDetails.id,
+    const updateCarRental = async () => {
+        axios.put(API_URL + '/rental/'+rentalID, {
             startDate: rentalStartDate,
-            addDate: new Date().toISOString().slice(0, 10),
             endDate: rentalEndDate
         },{
             headers: token
         })
             .then(async () => {
-                dispatch(showSnackbar("Car rental request submitted successfully", true));
+                dispatch(showSnackbar("Rental date changed successfully", true));
                 handleCloseRentalDialog();
                 await delay(2000);
-                navigate('/my-rentals');
+                navigate('/');
             })
             .catch((error) => {
                 console.log(error);
                 if (error.response.status === 404) {
-                    dispatch(showSnackbar("The specified car was not found", false));
+                    dispatch(showSnackbar("The specified rental was not found", false));
                 } else if (error.response.status === 400) {
                     dispatch(showSnackbar("Invalid car rental date range entered", false));
                 } else {
-                    dispatch(showSnackbar("Error occurred while attempting to rent the car. Please contact the administrator", false));
+                    dispatch(showSnackbar("Error occurred while updating the rental date. Please contact the administrator", false));
                 }
             })
     };
 
     return (
-        <div>
+        <>
             <Button
                 variant="contained"
+                color="warning"
                 onClick={() => {
                     handleClickOpenRentalDialog();
                 }}
             >
-                <CarRentalIcon fontSize="small" />
+                <EditIcon fontSize="small" />
             </Button>
 
             <Dialog open={openRentalDialog} onClose={handleCloseRentalDialog}>
-                <DialogTitle>Rent a car</DialogTitle>
+                <DialogTitle>Change rental date</DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{ mb: 2 }}>
                         Select the rental period, then confirm using the button
@@ -132,9 +129,9 @@ export default function CarRentalDialog(props){
                     </FormGroup>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={addCarRental}>Send request</Button>
+                    <Button onClick={updateCarRental}>Update</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     );
 }

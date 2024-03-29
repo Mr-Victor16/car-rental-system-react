@@ -6,17 +6,17 @@ import axios from "axios";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
-const API_URL = "http://localhost:8080/api";
 
 export default function ChangeRentalStatusDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
+    const API_URL = "http://localhost:8080/api";
 
     const [openDialog, setOpenDialog] = useState(false);
     const [currentStatus] = useState(props.status);
     const [setRentals] = props.setRentals;
-    const [status, setStatus] = React.useState(0);
+    const [status, setStatus] = React.useState("");
     const [rentalID] = useState(props.rentalID);
     const [statusList] = useState(props.statusList);
     let navigate = useNavigate();
@@ -44,14 +44,20 @@ export default function ChangeRentalStatusDialog(props){
             headers: token,
         })
             .then(async () => {
-                dispatch(showSnackbar("Pomyślnie zmieniono status wynajmu", true));
+                dispatch(showSnackbar("Rental status changed successfully", true));
                 await delay(2000);
                 getRentals();
                 handleClose();
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas zmiany statusu wynajmu", false));
+                if (error.response.status === 404) {
+                    dispatch(showSnackbar("The specified rental was not found", false));
+                } else if (error.response.status === 400) {
+                    dispatch(showSnackbar("The specified rental status was not found", false));
+                } else{
+                    dispatch(showSnackbar("Error occurred while changing the rental status", false));
+                }
             })
 
     };
@@ -65,26 +71,26 @@ export default function ChangeRentalStatusDialog(props){
             })
             .catch((error) => {
                 console.log(error);
-                dispatch(showSnackbar("Błąd podczas pobierania listy wynajmów", false));
+                dispatch(showSnackbar("Error occurred while retrieving the list of rentals", false));
             })
     };
 
     function getStatusName(name){
         switch(name){
             case "STATUS_PENDING": {
-                return "Przetwarzanie";
+                return "Pending";
             }
             case "STATUS_ACCEPTED": {
-                return "Zaakceptowany";
+                return "Accepted";
             }
             case "STATUS_REJECTED": {
-                return "Odrzucony";
+                return "Rejected";
             }
             case "STATUS_CANCELLED": {
-                return "Anulowany";
+                return "Cancelled";
             }
             default: {
-                return "Nierozpoznany";
+                return "Unknown";
             }
         }
     }
@@ -102,7 +108,7 @@ export default function ChangeRentalStatusDialog(props){
             </Button>
 
             <Dialog open={openDialog} onClose={handleClose} maxWidth={"xs"} fullWidth>
-                <DialogTitle>Zmień status wynajmu</DialogTitle>
+                <DialogTitle>Update rental status</DialogTitle>
 
                 <DialogContent align="center">
                     <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
@@ -126,7 +132,7 @@ export default function ChangeRentalStatusDialog(props){
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Zamknij</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>

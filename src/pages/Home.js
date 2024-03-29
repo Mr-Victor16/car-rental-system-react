@@ -11,7 +11,6 @@ import ChangeImageDialog from "../components/ChangeImageDialog";
 import CarRentalDialog from "../components/CarRentalDialog";
 import {showSnackbar} from "../actions/snackbarActions";
 
-
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
