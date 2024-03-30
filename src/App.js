@@ -12,6 +12,8 @@ import MyRentals from "./pages/MyRentals";
 import Rentals from "./pages/Rentals";
 import CarList from "./pages/CarList";
 import GlobalSnackbar from "./components/GlobalSnackbar";
+import UserList from "./pages/UserList";
+import AddUser from "./pages/AddUser";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
               <Route path="my-rentals" element={<MyRentals />} />
               <Route path="rentals" element={<Rentals />} />
               <Route path="car/list" element={<CarList />} />
+              <Route path="users" element={<UserList />} />
+              <Route path="user/add" element={<AddUser />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
