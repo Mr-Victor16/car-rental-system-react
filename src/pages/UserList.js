@@ -8,6 +8,7 @@ import DeleteIcon  from '@mui/icons-material/Delete';
 import {showSnackbar} from "../actions/snackbarActions";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import {logout} from "../reducers/userDetailsReducer";
+import {getUserTypeName} from "../helpers/userTypes";
 
 const UserList = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -17,20 +18,6 @@ const UserList = () => {
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
     const [users, setUsers] = useState([]);
-
-    function getUserTypeName(name){
-        switch(name){
-            case "ROLE_ADMIN": {
-                return "Administrator";
-            }
-            case "ROLE_USER": {
-                return "User";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     const getUsers = () => {
         axios.get(API_URL + '/user',{

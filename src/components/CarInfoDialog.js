@@ -8,6 +8,7 @@ import MoneyIcon from '@mui/icons-material/MonetizationOn';
 import CarIcon from '@mui/icons-material/AirportShuttle';
 import ServiceIcon from '@mui/icons-material/MiscellaneousServices';
 import GridItem from "./GridItem";
+import {getFuelTypeName} from "../helpers/fuelTypes";
 
 export default function CarInfoDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
@@ -29,29 +30,6 @@ export default function CarInfoDialog(props){
     const handleClose = () => {
         setOpenDialog(false);
     };
-
-    function getFuelTypeName(name){
-        switch(name){
-            case "FUEL_GASOLINE": {
-                return "Gasoline";
-            }
-            case "FUEL_HYBRID": {
-                return "Hybrid";
-            }
-            case "FUEL_LPG": {
-                return "LPG";
-            }
-            case "FUEL_DIESEL": {
-                return "Diesel";
-            }
-            case "FUEL_ELECTRIC": {
-                return "Electric";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     return (
         <>

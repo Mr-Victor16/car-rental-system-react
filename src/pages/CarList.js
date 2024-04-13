@@ -10,6 +10,8 @@ import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import ChangeImageDialog from "../components/ChangeImageDialog";
 import CarInfoDialog from "../components/CarInfoDialog";
 import {showSnackbar} from "../actions/snackbarActions";
+import {getFuelTypeName} from "../helpers/fuelTypes";
+import {getCarStatusName} from "../helpers/carStatusNames";
 
 const CarList = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -19,43 +21,6 @@ const CarList = () => {
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
     const [cars, setCars] = useState([]);
-
-    function getStatusName(name){
-        switch(name){
-            case true: {
-                return "Yes";
-            }
-            case false: {
-                return "No";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
-
-    function getFuelTypeName(name){
-        switch(name){
-            case "FUEL_GASOLINE": {
-                return "Gasoline";
-            }
-            case "FUEL_HYBRID": {
-                return "Hybrid";
-            }
-            case "FUEL_LPG": {
-                return "LPG";
-            }
-            case "FUEL_DIESEL": {
-                return "Diesel";
-            }
-            case "FUEL_ELECTRIC": {
-                return "Electric";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     const getCars = () => {
         axios.get(API_URL + '/cars',{
@@ -151,7 +116,7 @@ const CarList = () => {
                                             <TableCell align="center">{car.year}</TableCell>
                                             <TableCell align="center">{getFuelTypeName(car.fuelType.name)}</TableCell>
                                             <TableCell align="center">{car.price + ' PLN'}</TableCell>
-                                            <TableCell align="center">{getStatusName(car.available)}</TableCell>
+                                            <TableCell align="center">{getCarStatusName(car.available)}</TableCell>
                                             <TableCell align="center">
                                                 <ChangeImageDialog carID={car.id} cars={[setCars]} />
                                                 &nbsp;

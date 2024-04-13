@@ -9,6 +9,7 @@ import RentalInfoDialog from "../components/RentalInfoDialog";
 import ChangeRentalStatusDialog from "../components/ChangeRentalStatusDialog";
 import {showSnackbar} from "../actions/snackbarActions";
 import ChangeCarRentalDialog from "../components/ChangeCarRentalDialog";
+import {getStatusName} from "../helpers/rentalStatusNames";
 
 const Rentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -19,26 +20,6 @@ const Rentals = () => {
     const API_URL = "http://localhost:8080/api";
     const [statusList, setStatusList] = useState([]);
     const [rentals, setRentals] = useState([]);
-
-    function getStatusName(name){
-        switch(name){
-            case "STATUS_PENDING": {
-                return "Pending";
-            }
-            case "STATUS_ACCEPTED": {
-                return "Accepted";
-            }
-            case "STATUS_REJECTED": {
-                return "Rejected";
-            }
-            case "STATUS_CANCELLED": {
-                return "Cancelled";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     const getRentals = () => {
         axios.get(API_URL + '/rentals',{

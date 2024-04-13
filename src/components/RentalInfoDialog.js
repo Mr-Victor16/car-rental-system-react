@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
+import {getStatusName} from "../helpers/rentalStatusNames";
 
 export default function RentalInfoDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
@@ -24,26 +25,6 @@ export default function RentalInfoDialog(props){
     const handleClose = () => {
         setOpenDialog(false);
     };
-
-    function getStatusName(name){
-        switch(name){
-            case "STATUS_PENDING": {
-                return "Pending";
-            }
-            case "STATUS_ACCEPTED": {
-                return "Accepted";
-            }
-            case "STATUS_REJECTED": {
-                return "Rejected";
-            }
-            case "STATUS_CANCELLED": {
-                return "Cancelled";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     return (
         <>

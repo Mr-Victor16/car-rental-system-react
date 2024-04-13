@@ -8,6 +8,13 @@ import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
+const validationSchema = Yup.object({
+    username: Yup.string()
+        .required("Username field cannot be empty"),
+    password: Yup.string()
+        .required("Password field cannot be empty"),
+});
+
 const Login = () => {
     let navigate = useNavigate();
     const dispatch = useDispatch();
@@ -18,13 +25,6 @@ const Login = () => {
         if (userDetails.token !== "") {
             navigate('/', {replace: true});
         }
-    });
-
-    const validationSchema = Yup.object({
-        username: Yup.string()
-            .required("Username field cannot be empty"),
-        password: Yup.string()
-            .required("Password field cannot be empty"),
     });
 
     const formik = useFormik({
@@ -39,25 +39,21 @@ const Login = () => {
     });
 
     const logIn = async () => {
-        if(formik.values.username !== "" && formik.values.password !== ""){
-            axios.post(API_URL + "signin", { username: formik.values.username, password: formik.values.password })
-                .then(response => {
-                    if (response.data.token) {
-                        dispatch(login(response.data));
-                    }
+        axios.post(API_URL + "signin", { username: formik.values.username, password: formik.values.password })
+            .then(response => {
+                if (response.data.token) {
+                    dispatch(login(response.data));
+                }
 
-                    navigate('/', { replace: true });
-                })
-                .catch(function(error) {
-                    if(error.response.status === 401) {
-                        dispatch(showSnackbar("Incorrect login credentials", false));
-                    } else {
-                        dispatch(showSnackbar("Error occurred during login attempt, please contact the administrator", false));
-                    }
-                })
-        } else {
-            dispatch(showSnackbar("You need to enter your login credentials", false));
-        }
+                navigate('/', { replace: true });
+            })
+            .catch(function(error) {
+                if(error.response.status === 401) {
+                    dispatch(showSnackbar("Incorrect login credentials", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred during login attempt, please contact the administrator", false));
+                }
+            })
     }
 
     return (
@@ -95,7 +91,7 @@ const Login = () => {
                         type={"password"}
                     />
 
-                    <Button variant="contained" onClick={logIn}>Log in</Button>
+                    <Button variant="contained" onClick={logIn} disabled={!(formik.isValid && formik.dirty)}>Log in</Button>
                     <Button variant="outlined" component={Link} to="../register">Create an account</Button>
                 </Stack>
             </Box>

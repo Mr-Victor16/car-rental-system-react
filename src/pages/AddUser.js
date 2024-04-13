@@ -8,6 +8,24 @@ import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
+const validationSchema = Yup.object({
+    username: Yup.string()
+        .required("Username field cannot be empty")
+        .min(3, "Username is too short. Please enter a username between 3-20 characters long")
+        .max(20, "Username is too long. Please enter a username between 3-20 characters long"),
+    password: Yup.string()
+        .required("Password field cannot be empty")
+        .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+        .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
+    accountType: Yup.string()
+        .required("You must select a user type"),
+    email: Yup.string()
+        .email('Invalid email')
+        .required("E-mail field cannot be empty")
+        .min(5, "E-mail address is too short. Please enter a e-mail address between 5-50 characters long")
+        .max(50, "E-mail address is too long. Please enter a e-mail address between 5-50 characters long"),
+});
+
 const AddUser = () => {
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
@@ -24,24 +42,6 @@ const AddUser = () => {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const validationSchema = Yup.object({
-        username: Yup.string()
-            .required("Username field cannot be empty")
-            .min(3, "Username is too short. Please enter a username between 3-20 characters long")
-            .max(20, "Username is too long. Please enter a username between 3-20 characters long"),
-        password: Yup.string()
-            .required("Password field cannot be empty")
-            .min(5, "Password is too short. Please enter a password between 5-120 characters long")
-            .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
-        accountType: Yup.string()
-            .required("You must select a user type"),
-        email: Yup.string()
-            .email('Invalid email')
-            .required("E-mail field cannot be empty")
-            .min(5, "E-mail address is too short. Please enter a e-mail address between 5-50 characters long")
-            .max(50, "E-mail address is too long. Please enter a e-mail address between 5-50 characters long"),
-    });
-
     const formik = useFormik({
         initialValues: {
             username: "",
@@ -56,32 +56,27 @@ const AddUser = () => {
     });
 
     const addUser = async () => {
-        if(formik.values.username !== "" && formik.values.email !== "" && formik.values.password !== "" && formik.values.role !== ""){
-            axios.post(API_URL + '/user', {
-                username: formik.values.username,
-                email: formik.values.email,
-                password: formik.values.password,
-                role: formik.values.accountType
-            },{
-                headers: token,
+        axios.post(API_URL + '/user', {
+            username: formik.values.username,
+            email: formik.values.email,
+            password: formik.values.password,
+            role: formik.values.accountType
+        },{
+            headers: token,
+        })
+            .then(async () => {
+                dispatch(showSnackbar("User successfully added", true));
+                await delay(2000);
+                navigate('/users', {replace: true});
             })
-                .then(async () => {
-                    dispatch(showSnackbar("User successfully added", true));
-                    await delay(2000);
-                    navigate('/users', {replace: true});
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (error.response.status === 409) {
-                        dispatch(showSnackbar("The username or email is already in use", false));
-                    } else {
-                        dispatch(showSnackbar("Error occurred while adding user", false));
-                    }
-                })
-        }
-        else{
-            dispatch(showSnackbar("Not all fields have been completed", false));
-        }
+            .catch((error) => {
+                console.log(error);
+                if (error.response.status === 409) {
+                    dispatch(showSnackbar("The username or email is already in use", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while adding user", false));
+                }
+            })
     }
 
     return (
@@ -162,7 +157,7 @@ const AddUser = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={addUser} fullWidth>Add user</Button>
+                        <Button variant="contained" onClick={addUser} disabled={!(formik.isValid && formik.dirty)} fullWidth>Add user</Button>
                     </Grid>
                 </Grid>
             </Box>

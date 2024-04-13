@@ -7,14 +7,13 @@ import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
+import {getFuelTypeName} from "../helpers/fuelTypes";
 
 const AddCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
-
-    const currentTime = new Date();
-    const maxYear = currentTime.getFullYear();
+    const maxYear = new Date().getFullYear();
 
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
@@ -42,29 +41,6 @@ const AddCar = () => {
             navigate('/', { replace: true });
         }
     }, [userDetails.token]);
-
-    function getFuelTypeName(name){
-        switch(name){
-            case "FUEL_GASOLINE": {
-                return "Gasoline";
-            }
-            case "FUEL_HYBRID": {
-                return "Hybrid";
-            }
-            case "FUEL_LPG": {
-                return "LPG";
-            }
-            case "FUEL_DIESEL": {
-                return "Diesel";
-            }
-            case "FUEL_ELECTRIC": {
-                return "Electric";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -116,32 +92,27 @@ const AddCar = () => {
     });
 
     const addCar = async () => {
-        if(formik.values.horsePower !== "" && formik.values.price !== "" && formik.values.mileage !== "" && formik.values.brand !== "" && formik.values.model !== "" && formik.values.capacity !== "" && formik.values.year !== '' && formik.values.fuelType !== ""){
-            axios.post(API_URL + '/car', {
-                horsePower: formik.values.horsePower,
-                price: formik.values.price,
-                year: formik.values.year,
-                mileage: formik.values.mileage,
-                brand: formik.values.brand,
-                model: formik.values.model,
-                capacity: formik.values.capacity,
-                fuelType: formik.values.fuelType
-            },{
-                headers: token,
+        axios.post(API_URL + '/car', {
+            horsePower: formik.values.horsePower,
+            price: formik.values.price,
+            year: formik.values.year,
+            mileage: formik.values.mileage,
+            brand: formik.values.brand,
+            model: formik.values.model,
+            capacity: formik.values.capacity,
+            fuelType: formik.values.fuelType
+        },{
+            headers: token,
+        })
+            .then(async () => {
+                dispatch(showSnackbar("Car successfully added", true));
+                await delay(2000);
+                navigate('/', {replace: true});
             })
-                .then(async () => {
-                    dispatch(showSnackbar("Car successfully added", true));
-                    await delay(2000);
-                    navigate('/', {replace: true});
-                })
-                .catch((error) => {
-                    console.log(error);
-                    dispatch(showSnackbar("Error occurred while adding the car", false));
-                })
-        }
-        else{
-            dispatch(showSnackbar("Not all fields have been completed", false));
-        }
+            .catch((error) => {
+                console.log(error);
+                dispatch(showSnackbar("Error occurred while adding the car", false));
+            })
     }
 
     return (
@@ -290,7 +261,7 @@ const AddCar = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={addCar} fullWidth>Add car</Button>
+                        <Button variant="contained" onClick={addCar} disabled={!(formik.isValid && formik.dirty)} fullWidth>Add car</Button>
                     </Grid>
                 </Grid>
             </Box>

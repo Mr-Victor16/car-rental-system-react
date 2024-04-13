@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import RentalInfoDialog from "../components/RentalInfoDialog";
 import {showSnackbar} from "../actions/snackbarActions";
+import {getStatusName} from "../helpers/rentalStatusNames";
 
 const MyRentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -15,26 +16,6 @@ const MyRentals = () => {
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
     const [rentals, setRentals] = useState([]);
-
-    function getStatusName(name){
-        switch(name){
-            case "STATUS_PENDING": {
-                return "Pending";
-            }
-            case "STATUS_ACCEPTED": {
-                return "Accepted";
-            }
-            case "STATUS_REJECTED": {
-                return "Rejected";
-            }
-            case "STATUS_CANCELLED": {
-                return "Cancelled";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     const getRentals = () => {
         axios.get(API_URL + '/rentals/'+userDetails.id,{

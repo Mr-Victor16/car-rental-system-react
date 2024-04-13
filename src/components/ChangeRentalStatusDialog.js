@@ -6,6 +6,7 @@ import axios from "axios";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
+import {getStatusName} from "../helpers/rentalStatusNames";
 
 export default function ChangeRentalStatusDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
@@ -74,26 +75,6 @@ export default function ChangeRentalStatusDialog(props){
                 dispatch(showSnackbar("Error occurred while retrieving the list of rentals", false));
             })
     };
-
-    function getStatusName(name){
-        switch(name){
-            case "STATUS_PENDING": {
-                return "Pending";
-            }
-            case "STATUS_ACCEPTED": {
-                return "Accepted";
-            }
-            case "STATUS_REJECTED": {
-                return "Rejected";
-            }
-            case "STATUS_CANCELLED": {
-                return "Cancelled";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     return (
         <>

@@ -7,6 +7,27 @@ import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
+const validationSchema = Yup.object({
+    username: Yup.string()
+        .required("Username field cannot be empty")
+        .min(3, "Username is too short. Please enter a username between 3-20 characters long")
+        .max(20, "Username is too long. Please enter a username between 3-20 characters long"),
+    password: Yup.string()
+        .required("Password field cannot be empty")
+        .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+        .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
+    confirmPassword: Yup.string()
+        .required("Confirm password field cannot be empty")
+        .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+        .max(120, "Password is too long. Please enter a password between 5-120 characters long")
+        .oneOf([Yup.ref('password')], "Passwords do not match. Make sure the repeated password matches the password"),
+    email: Yup.string()
+        .email('Invalid email')
+        .required("E-mail field cannot be empty")
+        .min(5, "E-mail address is too short. Please enter a e-mail address between 5-50 characters long")
+        .max(50, "E-mail address is too long. Please enter a e-mail address between 5-50 characters long"),
+});
+
 const Register = () => {
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api/auth/";
@@ -17,26 +38,6 @@ const Register = () => {
         if (userDetails.token !== "") {
             navigate('/', {replace: true});
         }
-    });
-
-    const validationSchema = Yup.object({
-        username: Yup.string()
-            .required("Username field cannot be empty")
-            .min(3, "Username is too short. Please enter a username between 3-20 characters long")
-            .max(20, "Username is too long. Please enter a username between 3-20 characters long"),
-        password: Yup.string()
-            .required("Password field cannot be empty")
-            .min(5, "Password is too short. Please enter a password between 5-120 characters long")
-            .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
-        confirmPassword: Yup.string()
-            .required("Confirm password field cannot be empty")
-            .min(5, "Password is too short. Please enter a password between 5-120 characters long")
-            .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
-        email: Yup.string()
-            .email('Invalid email')
-            .required("E-mail field cannot be empty")
-            .min(5, "E-mail address is too short. Please enter a e-mail address between 5-50 characters long")
-            .max(50, "E-mail address is too long. Please enter a e-mail address between 5-50 characters long"),
     });
 
     const formik = useFormik({
@@ -53,30 +54,22 @@ const Register = () => {
     });
 
     const signUp = async () => {
-        if(formik.values.username !== "" && formik.values.password !== "" && formik.values.email !== "") {
-            if (formik.values.password === formik.values.confirmPassword) {
-                axios.post(API_URL + "signup", {
-                    username: formik.values.username,
-                    email: formik.values.email,
-                    password: formik.values.password
-                })
-                    .then(() => {
-                        navigate('/login', {replace: true});
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        if (error.response.status === 409) {
-                            dispatch(showSnackbar("The username or email is already in use", false));
-                        } else {
-                            dispatch(showSnackbar("Error occurred while attempting to register. Please contact the administrator", false));
-                        }
-                    })
-            } else {
-                dispatch(showSnackbar("The passwords don't match", false));
-            }
-        } else {
-            dispatch(showSnackbar("You must fill in all fields of the form", false));
-        }
+        axios.post(API_URL + "signup", {
+            username: formik.values.username,
+            email: formik.values.email,
+            password: formik.values.password
+        })
+            .then(() => {
+                navigate('/login', {replace: true});
+            })
+            .catch(function (error) {
+                console.log(error);
+                if (error.response.status === 409) {
+                    dispatch(showSnackbar("The username or email is already in use", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while attempting to register. Please contact the administrator", false));
+                }
+            })
     }
 
     return (
@@ -138,7 +131,7 @@ const Register = () => {
                         type={"password"}
                     />
                 
-                    <Button variant="contained" onClick={signUp}>Sign up</Button>
+                    <Button variant="contained" onClick={signUp} disabled={!(formik.isValid && formik.dirty)}>Sign up</Button>
                     <Button variant="outlined" component={Link} to="../login">Already have an account? Log in</Button>
                 </Stack>
             </Box>

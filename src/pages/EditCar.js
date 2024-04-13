@@ -7,15 +7,14 @@ import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
+import {getFuelTypeName} from "../helpers/fuelTypes";
 
 const EditCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
     let { id } = useParams();
-
-    const currentTime = new Date();
-    const maxYear = currentTime.getFullYear();
+    const maxYear = new Date().getFullYear();
 
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
@@ -77,29 +76,6 @@ const EditCar = () => {
             })
     };
 
-    function getFuelTypeName(name){
-        switch(name){
-            case "FUEL_GASOLINE": {
-                return "Gasoline";
-            }
-            case "FUEL_HYBRID": {
-                return "Hybrid";
-            }
-            case "FUEL_LPG": {
-                return "LPG";
-            }
-            case "FUEL_DIESEL": {
-                return "Diesel";
-            }
-            case "FUEL_ELECTRIC": {
-                return "Electric";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
-
     const validationSchema = Yup.object({
         horsePower: Yup.number()
             .min(50, "The value of the car's horsepower is too small (min. is 50)")
@@ -150,35 +126,31 @@ const EditCar = () => {
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const editCar = async () => {
-        if(formik.values.horsePower !== "" && formik.values.price !== "" && formik.values.mileage !== "" && formik.values.brand !== "" && formik.values.model !== "" && formik.values.capacity !== "" && formik.values.year !== '' && formik.values.fuelType !== "") {
-            axios.put(API_URL + '/car/' + id, {
-                horsePower: formik.values.horsePower,
-                price: formik.values.price,
-                year: formik.values.year,
-                mileage: formik.values.mileage,
-                brand: formik.values.brand,
-                model: formik.values.model,
-                capacity: formik.values.capacity,
-                fuelType: formik.values.fuelType
-            }, {
-                headers: token,
+        axios.put(API_URL + '/car/' + id, {
+            horsePower: formik.values.horsePower,
+            price: formik.values.price,
+            year: formik.values.year,
+            mileage: formik.values.mileage,
+            brand: formik.values.brand,
+            model: formik.values.model,
+            capacity: formik.values.capacity,
+            fuelType: formik.values.fuelType
+        }, {
+            headers: token,
+        })
+            .then(async () => {
+                dispatch(showSnackbar("Car information has been successfully updated", true));
+                await delay(2000);
+                navigate('/', {replace: true});
             })
-                .then(async () => {
-                    dispatch(showSnackbar("Car information has been successfully updated", true));
-                    await delay(2000);
-                    navigate('/', {replace: true});
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (error.response.status === 404) {
-                        dispatch(showSnackbar("The specified car was not found", false));
-                    } else {
-                        dispatch(showSnackbar("Error occurred while updating car information", false));
-                    }
-                })
-        } else {
-            dispatch(showSnackbar("Not all fields have been completed", false));
-        }
+            .catch((error) => {
+                console.log(error);
+                if (error.response.status === 404) {
+                    dispatch(showSnackbar("The specified car was not found", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while updating car information", false));
+                }
+            })
     }
 
     return (
@@ -327,7 +299,7 @@ const EditCar = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={editCar} fullWidth>Save changes</Button>
+                        <Button variant="contained" onClick={editCar} disabled={!(formik.isValid && formik.dirty)} fullWidth>Save changes</Button>
                     </Grid>
                 </Grid>
             </Box>

@@ -10,6 +10,7 @@ import AuthHeader from "../services/authHeader";
 import ChangeImageDialog from "../components/ChangeImageDialog";
 import CarRentalDialog from "../components/CarRentalDialog";
 import {showSnackbar} from "../actions/snackbarActions";
+import {getFuelTypeName} from "../helpers/fuelTypes";
 
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
@@ -56,29 +57,6 @@ const Home = () => {
                 dispatch(showSnackbar("Error occurred while deleting the car", false));
             })
     };
-
-    function getFuelTypeName(name){
-        switch(name){
-            case "FUEL_GASOLINE": {
-                return "Gasoline";
-            }
-            case "FUEL_HYBRID": {
-                return "Hybrid";
-            }
-            case "FUEL_LPG": {
-                return "LPG";
-            }
-            case "FUEL_DIESEL": {
-                return "Diesel";
-            }
-            case "FUEL_ELECTRIC": {
-                return "Electric";
-            }
-            default: {
-                return "Unknown";
-            }
-        }
-    }
 
     return (
         <>

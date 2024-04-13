@@ -9,6 +9,17 @@ import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
+const validationSchema = Yup.object({
+    newPassword: Yup.string()
+        .required("Password field cannot be empty")
+        .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+        .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
+    oldPassword: Yup.string()
+        .required("Password field cannot be empty")
+        .min(5, "Password is too short. Please enter a password between 5-120 characters long")
+        .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
+});
+
 const Profile = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
@@ -28,15 +39,6 @@ const Profile = () => {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const validationSchema = Yup.object({
-        newPassword: Yup.string()
-            .required("Password field cannot be empty")
-            .min(5, "Password is too short. Please enter a password between 5-120 characters long")
-            .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
-        oldPassword: Yup.string()
-            .required("Password field cannot be empty"),
-    });
-
     const formik = useFormik({
         initialValues: {
             newPassword: "",
@@ -49,35 +51,31 @@ const Profile = () => {
     });
 
     const editPassword = () => {
-        if(formik.values.oldPassword !== "" && formik.values.newPassword !== ""){
-            axios.put(API_URL + '/user/changePassword', {
-                userID: userDetails.id,
-                oldPassword: formik.values.oldPassword,
-                newPassword: formik.values.newPassword,
-            },{
-                headers: token
+        axios.put(API_URL + '/user/changePassword', {
+            userID: userDetails.id,
+            oldPassword: formik.values.oldPassword,
+            newPassword: formik.values.newPassword,
+        },{
+            headers: token
+        })
+            .then(async () => {
+                setOpen(false);
+                dispatch(showSnackbar("Password successfully changed", true));
+                await delay(2000);
+                navigate('/', {replace: true});
             })
-                .then(async () => {
-                    setOpen(false);
-                    dispatch(showSnackbar("Password successfully changed", true));
-                    await delay(2000);
-                    navigate('/', {replace: true});
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (error.response.status === 422) {
-                        dispatch(showSnackbar("Actually and new password cannot be the same", false));
-                    } else if (error.response.status === 403) {
-                        dispatch(showSnackbar("Incorrect current password", false));
-                    } else if (error.response.status === 404) {
-                        dispatch(showSnackbar("Error occurred while changing the password. The specified user doesn't exist", false));
-                    } else {
-                        dispatch(showSnackbar("Error occurred while changing the password. Please contact the administrator", false));
-                    }
-                })
-        } else {
-            dispatch(showSnackbar("You must fill in all fields", false));
-        }
+            .catch((error) => {
+                console.log(error);
+                if (error.response.status === 422) {
+                    dispatch(showSnackbar("Actually and new password cannot be the same", false));
+                } else if (error.response.status === 403) {
+                    dispatch(showSnackbar("Incorrect current password", false));
+                } else if (error.response.status === 404) {
+                    dispatch(showSnackbar("Error occurred while changing the password. The specified user doesn't exist", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while changing the password. Please contact the administrator", false));
+                }
+            })
     };
 
     useEffect(() => {
@@ -155,7 +153,7 @@ const Profile = () => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={editPassword}>Confirm changes</Button>
+                    <Button onClick={editPassword} disabled={!(formik.isValid && formik.dirty)}>Confirm changes</Button>
                 </DialogActions>
             </Dialog>
         </Container>
