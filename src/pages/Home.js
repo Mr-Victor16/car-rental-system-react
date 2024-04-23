@@ -12,6 +12,14 @@ import CarRentalDialog from "../components/CarRentalDialog";
 import {showSnackbar} from "../actions/snackbarActions";
 import {getFuelTypeName} from "../helpers/fuelTypes";
 
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
+
 const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
@@ -35,14 +43,6 @@ const Home = () => {
                 dispatch(showSnackbar("Error occurred while fetching the list of available cars. Please contact the administrator", false));
             })
     };
-
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    }));
 
     const deleteCar = async (id) => {
         axios.delete(API_URL + '/car/'+id, {

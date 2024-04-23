@@ -2,15 +2,15 @@ import {Grid, List, ListItem, ListItemIcon, ListItemText, Paper} from "@mui/mate
 import React from "react";
 import {styled} from "@mui/material/styles";
 
-export default function GridItem(props){
-    const Item = styled(Paper)(({ theme }) => ({
-        ...theme.typography.body2,
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.text.secondary,
-        height: 70,
-        lineHeight: '60px',
-    }));
+const Item = styled(Paper)(({ theme }) => ({
+    ...theme.typography.body2,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.secondary,
+    height: 70,
+    lineHeight: '60px',
+}));
 
+export default function GridItem(props){
     return (
         <Grid item xs={props.xs} md={props.md}>
             <Item>
