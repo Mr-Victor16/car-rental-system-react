@@ -12,7 +12,6 @@ import {getFuelTypeName} from "../helpers/fuelTypes";
 
 export default function CarInfoDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
-
     const [openDialog, setOpenDialog] = useState(false);
     const [car] = useState(props.carInfo);
     let navigate = useNavigate();

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Typography, TextField, Box, Button, Stack, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../reducers/userDetailsReducer';
 import {showSnackbar} from "../actions/snackbarActions";
@@ -19,7 +19,6 @@ const Login = () => {
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const userDetails = useSelector((state) => state.userDetails);
-    const API_URL = "http://localhost:8080/api/auth/";
 
     useEffect(() => {
         if (userDetails.token !== "") {
@@ -39,7 +38,7 @@ const Login = () => {
     });
 
     const logIn = async () => {
-        axios.post(API_URL + "signin", { username: formik.values.username, password: formik.values.password })
+        axios.post("auth/signin", { username: formik.values.username, password: formik.values.password })
             .then(response => {
                 if (response.data.token) {
                     dispatch(login(response.data));

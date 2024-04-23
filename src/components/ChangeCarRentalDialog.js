@@ -4,34 +4,25 @@ import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
 const validationSchema = Yup.object({
     rentalStartDate: Yup.date()
-        .required("Rental start date is required"),
+        .required("Rental start date is required")
+        .max(Yup.ref('rentalEndDate'), 'Start date must be before or equal to end date'),
     rentalEndDate: Yup.date()
         .required('Rental end date is required')
-        .when('rentalStartDate', (rentalStartDate, schema) => {
-            return rentalStartDate ? schema.min(rentalStartDate, 'End date must be after or equal to start date') : schema;
-        })
-        .test('end-date-greater', 'End date must be greater than or equal to start date', function (value) {
-            const start = this.resolve(Yup.ref('rentalStartDate'));
-            return start && value ? value >= start : true;
-        }),
+        .min(Yup.ref('rentalStartDate'), 'End date must be after or equal to start date')
 });
 
 export default function ChangeCarRentalDialog(props){
     const dispatch = useDispatch();
     const token = AuthHeader();
-    const API_URL = "http://localhost:8080/api";
-
     const [openRentalDialog, setOpenRentalDialog] = useState(false);
-    const [carPrice] = useState(props.carPrice);
     const [rentalCost, setRentalCost] = useState(0);
-    const [rentalID] = useState(props.rentalID);
     let navigate = useNavigate();
 
     const formik = useFormik({
@@ -61,11 +52,11 @@ export default function ChangeCarRentalDialog(props){
 
     const handleChangeRentalDate = () => {
         let difference = new Date(formik.values.rentalEndDate).getTime() - new Date(formik.values.rentalStartDate).getTime();
-        setRentalCost(carPrice * (Math.ceil(difference / (1000 * 3600 * 24))+1));
+        setRentalCost(props.carPrice * (Math.ceil(difference / (1000 * 3600 * 24))+1));
     };
 
     const updateCarRental = async () => {
-        axios.put(API_URL + '/rental/'+rentalID, {
+        axios.put('rental/'+props.rentalID, {
             startDate: formik.values.rentalStartDate,
             endDate: formik.values.rentalEndDate
         },{

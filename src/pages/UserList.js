@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -14,13 +14,11 @@ const UserList = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     const [users, setUsers] = useState([]);
 
     const getUsers = () => {
-        axios.get(API_URL + '/user',{
+        axios.get('user',{
             headers: token
         })
             .then((response) => {
@@ -33,7 +31,7 @@ const UserList = () => {
     };
 
     const deleteUser = (id) => {
-        axios.delete(API_URL + '/user/'+id, {
+        axios.delete('user/'+id, {
             headers: token
         })
             .then(async () => {
@@ -53,11 +51,9 @@ const UserList = () => {
     };
 
     const changeUserRole = (idUser, idRole) => {
-        let role;
-        if (idRole === 1) role = "user";
-        else role = "admin";
+        const role = idRole === 1 ? "user" : "admin";
 
-        axios.put(API_URL + '/user/'+idUser+'/role/'+role, {}, {
+        axios.put('user/'+idUser+'/role/'+role, {}, {
             headers: token
         })
             .then(() => {

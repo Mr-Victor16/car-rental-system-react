@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {useNavigate, useParams} from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
@@ -12,10 +12,8 @@ import {getFuelTypeName} from "../helpers/fuelTypes";
 const EditCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     let { id } = useParams();
     const maxYear = new Date().getFullYear();
-
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
@@ -27,7 +25,7 @@ const EditCar = () => {
 
     const getCarInfo = () => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/car/'+id, {
+            axios.get('car/'+id, {
                 headers: token
             })
                 .then(async (response) => {
@@ -58,7 +56,7 @@ const EditCar = () => {
     };
 
     const getFuelList = () => {
-        axios.get(API_URL + '/fuels')
+        axios.get('fuels')
             .then((response) => {
                 if (response.data.length === 0) {
                     dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
@@ -126,7 +124,7 @@ const EditCar = () => {
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const editCar = async () => {
-        axios.put(API_URL + '/car/' + id, {
+        axios.put('car/' + id, {
             horsePower: formik.values.horsePower,
             price: formik.values.price,
             year: formik.values.year,

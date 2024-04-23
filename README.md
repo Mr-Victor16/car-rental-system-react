@@ -12,8 +12,9 @@ _The proper functioning of the frontend requires the backend to be running._
 + Axios
 + Redux
 + Node.js
-+ Formik,
++ Formik
 + Yup
++ Docker, Docker Compose
 
 ## Features
 + **General:**

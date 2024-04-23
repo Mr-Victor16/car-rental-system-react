@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,13 +12,11 @@ const MyRentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     const [rentals, setRentals] = useState([]);
 
     const getRentals = () => {
-        axios.get(API_URL + '/rentals/'+userDetails.id,{
+        axios.get('rentals/'+userDetails.id,{
             headers: token
         })
             .then((response) => {

@@ -50,13 +50,13 @@ export default function RentalInfoDialog(props){
                         }}
                     >
                         {rentalHistory && rentalHistory.length > 0 ? (
-                            rentalHistory.map((item) => (
-                                <>
+                            rentalHistory.map((item, index) => (
+                                <React.Fragment key={index}>
                                     <ListItem>
                                         <ListItemText primary={getStatusName(item.statusAfterChange.name)} secondary={item.changeDate} />
                                     </ListItem>
-                                    <Divider variant="inset" component="li" />
-                                </>
+                                    { rentalHistory.length === 0 && <Divider variant="inset" component="li" /> }
+                                </React.Fragment>
                             ))
                         ) : (
                             <ListItem>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Link } from 'react-router-dom';
-import {Button, Grow, MenuItem, MenuList, Paper, Popper, Stack} from "@mui/material";
+import {Box, Button, Grow, MenuItem, MenuList, Paper, Popper, Stack} from "@mui/material";
 
 export default function AdminMenuList() {
     const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function AdminMenuList() {
 
     return (
         <Stack direction="row" spacing={2}>
-            <div>
+            <Box>
                 <Button
                     ref={anchorRef}
                     id="composition-button"
@@ -84,7 +84,7 @@ export default function AdminMenuList() {
                         </Grow>
                     )}
                 </Popper>
-            </div>
+            </Box>
         </Stack>
     );
 }

@@ -2,7 +2,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, F
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
@@ -12,13 +12,10 @@ export default function ChangeRentalStatusDialog(props){
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-    const API_URL = "http://localhost:8080/api";
 
     const [openDialog, setOpenDialog] = useState(false);
-    const [currentStatus] = useState(props.status);
     const [setRentals] = props.setRentals;
     const [status, setStatus] = React.useState("");
-    const [rentalID] = useState(props.rentalID);
     const [statusList] = useState(props.statusList);
     let navigate = useNavigate();
 
@@ -41,7 +38,7 @@ export default function ChangeRentalStatusDialog(props){
     const handleChange = (event) => {
         setStatus(event.target.value);
 
-        axios.put(API_URL + '/rental/'+rentalID+'/status/'+event.target.value, {},{
+        axios.put('rental/'+props.rentalID+'/status/'+event.target.value, {},{
             headers: token,
         })
             .then(async () => {
@@ -64,7 +61,7 @@ export default function ChangeRentalStatusDialog(props){
     };
 
     const getRentals = () => {
-        axios.get(API_URL + '/rentals',{
+        axios.get('rentals',{
             headers: token
         })
             .then((response) => {
@@ -102,7 +99,7 @@ export default function ChangeRentalStatusDialog(props){
                         >
                             { statusList && statusList.length > 0 && (
                                 statusList
-                                    .filter(status => status.id !== currentStatus.id)
+                                    .filter(status => status.id !== props.status.id)
                                     .map((filteredStatus, index) => {
                                         return (
                                             <MenuItem key={index} value={filteredStatus.id}>{getStatusName(filteredStatus.name)}</MenuItem>
@@ -113,7 +110,7 @@ export default function ChangeRentalStatusDialog(props){
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={handleClose}>Cancel</Button>
                 </DialogActions>
             </Dialog>
         </>

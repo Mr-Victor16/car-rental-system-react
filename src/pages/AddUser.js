@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
@@ -28,8 +28,6 @@ const validationSchema = Yup.object({
 
 const AddUser = () => {
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
-
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
@@ -56,7 +54,7 @@ const AddUser = () => {
     });
 
     const addUser = async () => {
-        axios.post(API_URL + '/user', {
+        axios.post('user', {
             username: formik.values.username,
             email: formik.values.email,
             password: formik.values.password,

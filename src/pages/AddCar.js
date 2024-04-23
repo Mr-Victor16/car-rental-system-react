@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
@@ -12,7 +12,6 @@ import {getFuelTypeName} from "../helpers/fuelTypes";
 const AddCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     const maxYear = new Date().getFullYear();
 
     const userDetails = useSelector((state) => state.userDetails);
@@ -21,7 +20,7 @@ const AddCar = () => {
 
     useEffect(() => {
         if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get(API_URL + '/fuels')
+            axios.get('fuels')
                 .then((response) => {
                     if (response.data.length === 0) {
                         dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
@@ -92,7 +91,7 @@ const AddCar = () => {
     });
 
     const addCar = async () => {
-        axios.post(API_URL + '/car', {
+        axios.post('car', {
             horsePower: formik.values.horsePower,
             price: formik.values.price,
             year: formik.values.year,

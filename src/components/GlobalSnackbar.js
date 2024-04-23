@@ -5,14 +5,10 @@ import React from "react";
 
 export default function GlobalSnackbar() {
     const dispatch = useDispatch();
-
     const { snackbarMessage, snackbarOpen, isSuccessSnackbar } = useSelector((state) => state.snackbar);
 
     function getSeverity(isSuccess){
-        if(isSuccess === true){
-            return "success";
-        }
-
+        if(isSuccess === true) return "success";
         return "error";
     }
 
@@ -21,7 +17,7 @@ export default function GlobalSnackbar() {
     }
 
     return (
-        <Snackbar open={snackbarOpen} autohideduration={3000} onClose={handleClose}>
+        <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
             <Alert onClose={handleClose} severity={getSeverity(isSuccessSnackbar)} sx={{ width: '100%' }}>
                 {snackbarMessage}
             </Alert>

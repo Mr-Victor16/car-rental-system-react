@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -15,14 +15,12 @@ const Rentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     const [statusList, setStatusList] = useState([]);
     const [rentals, setRentals] = useState([]);
 
     const getRentals = () => {
-        axios.get(API_URL + '/rentals',{
+        axios.get('rentals',{
             headers: token
         })
             .then((response) => {
@@ -35,7 +33,7 @@ const Rentals = () => {
     };
 
     const deleteRental = (id) => {
-        axios.delete(API_URL + '/rental/'+id, {
+        axios.delete('rental/'+id, {
             headers: token
         })
             .then(async () => {
@@ -58,7 +56,7 @@ const Rentals = () => {
     },[userDetails.token]);
 
     const getStatusList = () => {
-        axios.get(API_URL + '/rental-statuses')
+        axios.get('rental-statuses')
             .then((response) => {
                 if (response.data.length === 0) {
                     dispatch(showSnackbar("Error occurred while retrieving the list of rental statuses", false));

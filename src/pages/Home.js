@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {Card, CardActions, CardContent, CardMedia, Typography, Button, Grid, Stack, Paper} from "@mui/material";
 import EditIcon  from '@mui/icons-material/Edit';
 import DeleteIcon  from '@mui/icons-material/Delete';
@@ -24,17 +24,15 @@ const Home = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     const [cars, setCars] = useState([]);
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
 
     useEffect(() => {
         getCarsList();
     }, []);
 
     const getCarsList = async () => {
-        axios.get(API_URL + '/cars/available')
+        axios.get('cars/available')
             .then((response) => {
                 setCars(response.data);
             })
@@ -45,7 +43,7 @@ const Home = () => {
     };
 
     const deleteCar = async (id) => {
-        axios.delete(API_URL + '/car/'+id, {
+        axios.delete('car/'+id, {
             headers: token
         })
             .then(async () => {

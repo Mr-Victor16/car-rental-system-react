@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import AccountPics from "../images/blank-profile-picture.png";
 import {TextField, Typography, Box, Stack, Container, FormGroup, InputLabel, DialogContentText, DialogContent, DialogTitle, Dialog, DialogActions, Button} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
@@ -24,10 +24,8 @@ const Profile = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     let navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const API_URL = "http://localhost:8080/api";
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -51,7 +49,7 @@ const Profile = () => {
     });
 
     const editPassword = () => {
-        axios.put(API_URL + '/user/changePassword', {
+        axios.put('user/changePassword', {
             userID: userDetails.id,
             oldPassword: formik.values.oldPassword,
             newPassword: formik.values.newPassword,

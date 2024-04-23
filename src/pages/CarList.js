@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -17,13 +17,11 @@ const CarList = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     let navigate = useNavigate();
-    const API_URL = "http://localhost:8080/api";
     const [cars, setCars] = useState([]);
 
     const getCars = () => {
-        axios.get(API_URL + '/cars',{
+        axios.get('cars',{
             headers: token
         })
             .then((response) => {
@@ -36,7 +34,7 @@ const CarList = () => {
     };
 
     const deleteCar = (id) => {
-        axios.delete(API_URL + '/car/'+id, {
+        axios.delete('car/'+id, {
             headers: token
         })
             .then(async () => {
@@ -50,7 +48,7 @@ const CarList = () => {
     };
 
     const changeCarStatus = (id) => {
-        axios.put(API_URL + '/car/'+id+'/status', {}, {
+        axios.put('car/'+id+'/status', {}, {
             headers: token
         })
             .then(() => {

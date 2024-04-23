@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import React, {useState} from "react";
 import AuthHeader from "../services/authHeader";
-import axios from "axios";
+import axios from '../lib/axiosConfig';
 import ImageIcon from "@mui/icons-material/Image";
 import {showSnackbar} from "../actions/snackbarActions";
 import {useDispatch} from "react-redux";
@@ -10,11 +10,8 @@ export default function ChangeImageDialog(props) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     const [setCars] = props.cars;
-    const [carID] = useState(props.carID);
     const [selectedFile, setSelectedFile] = useState(null);
-    const API_URL = "http://localhost:8080/api";
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -29,7 +26,7 @@ export default function ChangeImageDialog(props) {
     };
 
     const getCarsList = async () => {
-        axios.get(API_URL + '/cars/available')
+        axios.get('cars/available')
             .then((response) => {
                 setCars(response.data);
             })
@@ -45,7 +42,7 @@ export default function ChangeImageDialog(props) {
         const formData = new FormData();
         formData.append("file", selectedFile, selectedFile.name);
 
-        axios.put(API_URL + '/car/'+carID+'/image', formData, {
+        axios.put('car/'+props.carID+'/image', formData, {
             headers: token
         })
             .then(async () => {
