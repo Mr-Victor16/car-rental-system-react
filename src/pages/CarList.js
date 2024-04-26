@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import EditIcon  from '@mui/icons-material/Edit';
@@ -14,7 +14,6 @@ import {getFuelTypeName} from "../helpers/fuelTypes";
 import {getCarStatusName} from "../helpers/carStatusNames";
 
 const CarList = () => {
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
     let navigate = useNavigate();
@@ -62,12 +61,8 @@ const CarList = () => {
     };
 
     useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        } else {
-            getCars();
-        }
-    },[userDetails.token]);
+        getCars();
+    },[]);
 
     return (
         <Container maxWidth="lg">

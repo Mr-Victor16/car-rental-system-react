@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from '../lib/axiosConfig';
 import AccountPics from "../images/blank-profile-picture.png";
 import {TextField, Typography, Box, Stack, Container, FormGroup, InputLabel, DialogContentText, DialogContent, DialogTitle, Dialog, DialogActions, Button} from '@mui/material';
@@ -75,12 +75,6 @@ const Profile = () => {
                 }
             })
     };
-
-    useEffect(() => {
-        if (userDetails.token === "") {
-            navigate('/', {replace: true});
-        }
-    });
 
     return (
         <Container maxWidth="sm">

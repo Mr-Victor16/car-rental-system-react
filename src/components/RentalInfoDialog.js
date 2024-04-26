@@ -1,22 +1,11 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, ListItem, List, ListItemText} from "@mui/material";
-import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import {getStatusName} from "../helpers/rentalStatusNames";
 
 export default function RentalInfoDialog(props){
-    const userDetails = useSelector((state) => state.userDetails);
-
     const [openDialog, setOpenDialog] = useState(false);
     const [rentalHistory] = useState(props.statusHistory);
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        if (userDetails.token === "") {
-            navigate('/', {replace: true});
-        }
-    },[userDetails.token]);
 
     const handleClickOpen = () => {
         setOpenDialog(true);

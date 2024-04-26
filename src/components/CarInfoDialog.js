@@ -1,7 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
-import React, {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import FuelIcon from '@mui/icons-material/LocalGasStation';
 import MoneyIcon from '@mui/icons-material/MonetizationOn';
@@ -11,16 +9,8 @@ import GridItem from "./GridItem";
 import {getFuelTypeName} from "../helpers/fuelTypes";
 
 export default function CarInfoDialog(props){
-    const userDetails = useSelector((state) => state.userDetails);
     const [openDialog, setOpenDialog] = useState(false);
     const [car] = useState(props.carInfo);
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        }
-    },[userDetails.token]);
 
     const handleClickOpen = () => {
         setOpenDialog(true);

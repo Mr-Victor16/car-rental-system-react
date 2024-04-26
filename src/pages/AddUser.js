@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import axios from '../lib/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
@@ -28,15 +28,8 @@ const validationSchema = Yup.object({
 
 const AddUser = () => {
     let navigate = useNavigate();
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
-    useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        }
-    },[userDetails.token]);
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 

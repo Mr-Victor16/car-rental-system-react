@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
-import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import RentalInfoDialog from "../components/RentalInfoDialog";
 import {showSnackbar} from "../actions/snackbarActions";
@@ -12,7 +11,6 @@ const MyRentals = () => {
     const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-    let navigate = useNavigate();
     const [rentals, setRentals] = useState([]);
 
     const getRentals = () => {
@@ -29,12 +27,8 @@ const MyRentals = () => {
     };
 
     useEffect(() => {
-        if (userDetails.token === "") {
-            navigate('/', {replace: true});
-        } else {
-            getRentals();
-        }
-    }, [userDetails.token]);
+        getRentals();
+    }, []);
 
     return (
         <Container maxWidth="lg">

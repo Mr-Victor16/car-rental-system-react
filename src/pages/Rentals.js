@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import DeleteIcon  from '@mui/icons-material/Delete';
@@ -12,7 +12,6 @@ import ChangeCarRentalDialog from "../components/ChangeCarRentalDialog";
 import {getStatusName} from "../helpers/rentalStatusNames";
 
 const Rentals = () => {
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
     let navigate = useNavigate();
@@ -47,19 +46,18 @@ const Rentals = () => {
     };
 
     useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        } else {
-            getRentals();
-            getStatusList();
-        }
-    },[userDetails.token]);
+        getRentals();
+        getStatusList();
+    },[]);
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const getStatusList = () => {
         axios.get('rental-statuses')
-            .then((response) => {
+            .then(async (response) => {
                 if (response.data.length === 0) {
                     dispatch(showSnackbar("Error occurred while retrieving the list of rental statuses", false));
+                    await delay(2000);
                     navigate('/', {replace: true});
                 } else {
                     setStatusList(response.data);
@@ -68,7 +66,7 @@ const Rentals = () => {
             .catch(async (error) => {
                 console.log(error);
                 dispatch(showSnackbar("Error occurred while retrieving the list of rental statuses", false));
-                //await delay(2000);
+                await delay(2000);
                 navigate('/', {replace: true});
             })
     };

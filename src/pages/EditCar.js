@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from '../lib/axiosConfig';
 import {useNavigate, useParams} from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
@@ -14,53 +14,48 @@ const EditCar = () => {
     let navigate = useNavigate();
     let { id } = useParams();
     const maxYear = new Date().getFullYear();
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
 
     useEffect(() => {
         getFuelList();
         getCarInfo();
-    }, [userDetails.token]);
+    }, []);
 
     const getCarInfo = () => {
-        if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get('car/'+id, {
-                headers: token
-            })
-                .then(async (response) => {
-                    if(response.data.length === 0){
-                        dispatch(showSnackbar("The specified car was not found", false));
-                        await delay(2000);
-                        navigate("../car/add");
-                    } else {
-                        formik.values.horsePower=response.data.horsePower;
-                        formik.values.price=response.data.price;
-                        formik.values.mileage=response.data.mileage;
-                        formik.values.brand=response.data.brand.name;
-                        formik.values.model=response.data.model.name;
-                        formik.values.capacity=response.data.capacity;
-                        formik.values.fuelType=response.data.fuelType.id;
-                        formik.values.year=response.data.year;
-                    }
-                })
-                .catch(async (error) => {
-                    console.log(error);
-                    dispatch(showSnackbar("Error occurred while retrieving car information", false));
+        axios.get('car/'+id, {
+            headers: token
+        })
+            .then(async (response) => {
+                if(response.data.length === 0){
+                    dispatch(showSnackbar("The specified car was not found", false));
                     await delay(2000);
-                    navigate('/', {replace: true});
-                })
-        } else {
-            navigate('/', { replace: true });
-        }
+                    navigate("../car/add");
+                } else {
+                    formik.values.horsePower=response.data.horsePower;
+                    formik.values.price=response.data.price;
+                    formik.values.mileage=response.data.mileage;
+                    formik.values.brand=response.data.brand.name;
+                    formik.values.model=response.data.model.name;
+                    formik.values.capacity=response.data.capacity;
+                    formik.values.fuelType=response.data.fuelType.id;
+                    formik.values.year=response.data.year;
+                }
+            })
+            .catch(async (error) => {
+                console.log(error);
+                dispatch(showSnackbar("Error occurred while retrieving car information", false));
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
     };
 
     const getFuelList = () => {
         axios.get('fuels')
-            .then((response) => {
+            .then(async (response) => {
                 if (response.data.length === 0) {
                     dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
-                    //await delay(2000);
+                    await delay(2000);
                     navigate('/', {replace: true});
                 } else {
                     setFuelList(response.data);
@@ -69,7 +64,7 @@ const EditCar = () => {
             .catch(async (error) => {
                 console.log(error);
                 dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
-                //await delay(2000);
+                await delay(2000);
                 navigate('/', {replace: true});
             })
     };

@@ -9,11 +9,9 @@ _The proper functioning of the frontend requires the backend to be running._
 ## Technologies used
 + React.js
 + MaterialUI
-+ Axios
-+ Redux
++ Axios, Router, Redux
 + Node.js
-+ Formik
-+ Yup
++ Formik, Yup
 + Docker, Docker Compose
 
 ## Features

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from '../lib/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
 import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
@@ -13,33 +13,27 @@ const AddCar = () => {
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
     const maxYear = new Date().getFullYear();
-
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
 
     useEffect(() => {
-        if((userDetails.token !== "") && (userDetails.roles.includes("ROLE_ADMIN"))){
-            axios.get('fuels')
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
-                        //await delay(2000);
-                        navigate('/', {replace: true});
-                    } else {
-                        setFuelList(response.data);
-                    }
-                })
-                .catch(async (error) => {
-                    console.log(error);
+        axios.get('fuels')
+            .then(async (response) => {
+                if (response.data.length === 0) {
                     dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
-                    // await delay(5000);
+                    await delay(2000);
                     navigate('/', {replace: true});
-                })
-        } else {
-            navigate('/', { replace: true });
-        }
-    }, [userDetails.token]);
+                } else {
+                    setFuelList(response.data);
+                }
+            })
+            .catch(async (error) => {
+                console.log(error);
+                dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
+    }, []);
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 

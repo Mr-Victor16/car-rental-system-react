@@ -1,7 +1,6 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, FormControl, MenuItem, Select} from "@mui/material";
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
+import {useDispatch} from "react-redux";
 import axios from '../lib/axiosConfig';
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import AuthHeader from "../services/authHeader";
@@ -9,21 +8,12 @@ import {showSnackbar} from "../actions/snackbarActions";
 import {getStatusName} from "../helpers/rentalStatusNames";
 
 export default function ChangeRentalStatusDialog(props){
-    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
-
     const [openDialog, setOpenDialog] = useState(false);
     const [setRentals] = props.setRentals;
     const [status, setStatus] = React.useState("");
     const [statusList] = useState(props.statusList);
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        }
-    },[userDetails.token]);
 
     const handleClickOpen = () => {
         setOpenDialog(true);

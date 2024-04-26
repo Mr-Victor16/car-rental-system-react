@@ -58,12 +58,7 @@ const UserList = () => {
         })
             .then(() => {
                 dispatch(showSnackbar("User role changed successfully", true));
-
-                if(idUser === userDetails.id){
-                    dispatch(logout());
-                } else {
-                    getUsers();
-                }
+                idUser === userDetails.id ? dispatch(logout()) : getUsers();
             })
             .catch((error) => {
                 console.log(error);
@@ -78,12 +73,8 @@ const UserList = () => {
     };
 
     useEffect(() => {
-        if (!userDetails.roles.includes('ROLE_ADMIN')) {
-            navigate('/', {replace: true});
-        } else {
-            getUsers();
-        }
-    },[userDetails.token]);
+        getUsers();
+    },[]);
 
     return (
         <Container maxWidth="lg">
