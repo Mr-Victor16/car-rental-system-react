@@ -1,7 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, ListItem, List, ListItemText} from "@mui/material";
 import React, {useState} from "react";
 import InfoIcon from "@mui/icons-material/Info";
-import {getStatusName} from "../helpers/rentalStatusNames";
+import {getStatusName} from "../../helpers/rentalStatusNames";
 
 export default function RentalInfoDialog(props){
     const [openDialog, setOpenDialog] = useState(false);

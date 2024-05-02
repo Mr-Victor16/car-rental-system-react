@@ -6,8 +6,6 @@ import NoPage from "./pages/NoPage";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import AddCar from "./pages/AddCar";
-import EditCar from "./pages/EditCar";
 import MyRentals from "./pages/MyRentals";
 import Rentals from "./pages/Rentals";
 import CarList from "./pages/CarList";
@@ -16,6 +14,7 @@ import UserList from "./pages/UserList";
 import AddUser from "./pages/AddUser";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import NoPermission from "./pages/NoPermission";
+import CarForm from "./pages/CarForm";
 
 function App() {
   return (
@@ -36,12 +35,12 @@ function App() {
 
               <Route
                   path="car/add"
-                  element={<ProtectedRoute element={<AddCar />} admin={true} />}
+                  element={<ProtectedRoute element={<CarForm />} admin={true} />}
               />
 
               <Route
                   path="car/edit/:id"
-                  element={<ProtectedRoute element={<EditCar />} admin={true} />}
+                  element={<ProtectedRoute element={<CarForm />} admin={true} />}
               />
 
               <Route

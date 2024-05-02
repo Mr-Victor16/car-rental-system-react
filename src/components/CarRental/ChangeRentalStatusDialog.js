@@ -1,11 +1,11 @@
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, FormControl, MenuItem, Select} from "@mui/material";
 import React, {useState} from "react";
 import {useDispatch} from "react-redux";
-import axios from '../lib/axiosConfig';
+import axios from '../../lib/axiosConfig';
 import BookmarkIcon from "@mui/icons-material/Bookmark";
-import AuthHeader from "../services/authHeader";
-import {showSnackbar} from "../actions/snackbarActions";
-import {getStatusName} from "../helpers/rentalStatusNames";
+import AuthHeader from "../../services/authHeader";
+import {showSnackbar} from "../../actions/snackbarActions";
+import {getStatusName} from "../../helpers/rentalStatusNames";
 
 export default function ChangeRentalStatusDialog(props){
     const dispatch = useDispatch();

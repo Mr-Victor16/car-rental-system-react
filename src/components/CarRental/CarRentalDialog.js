@@ -1,15 +1,23 @@
-import EditIcon from "@mui/icons-material/Edit";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormGroup, InputLabel, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
-import AuthHeader from "../services/authHeader";
+import {useDispatch, useSelector} from "react-redux";
+import AuthHeader from "../../services/authHeader";
 import {useNavigate} from "react-router-dom";
-import axios from '../lib/axiosConfig';
-import {showSnackbar} from "../actions/snackbarActions";
+import axios from '../../lib/axiosConfig';
+import {showSnackbar} from "../../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 
-const validationSchema = Yup.object({
+const newRentalValidationSchema = Yup.object({
+    rentalStartDate: Yup.date()
+        .required("Rental start date is required")
+        .min(new Date(Date.now()-86400000), "Rental start date cannot be in the past"),
+    rentalEndDate: Yup.date()
+        .required('Rental end date is required')
+        .min(Yup.ref('rentalStartDate'), 'End date must be after or equal to start date')
+});
+
+const editRentalValidationSchema = Yup.object({
     rentalStartDate: Yup.date()
         .required("Rental start date is required")
         .max(Yup.ref('rentalEndDate'), 'Start date must be before or equal to end date'),
@@ -18,23 +26,38 @@ const validationSchema = Yup.object({
         .min(Yup.ref('rentalStartDate'), 'End date must be after or equal to start date')
 });
 
-export default function ChangeCarRentalDialog(props){
+export default function CarRentalDialog(props){
+    const userDetails = useSelector((state) => state.userDetails);
     const dispatch = useDispatch();
     const token = AuthHeader();
     const [openRentalDialog, setOpenRentalDialog] = useState(false);
-    const [rentalCost, setRentalCost] = useState(0);
     let navigate = useNavigate();
+    const rentalID = props.rentalID;
+    const [rentalCost, setRentalCost] = useState(0);
+    const buttonLabel = rentalID ? "Update" : "Send request";
 
-    const formik = useFormik({
-        initialValues: {
+    const getInitialValues = () => {
+        return rentalID ? {
             rentalStartDate: props.startDate,
             rentalEndDate: props.endDate,
-        },
-        validationSchema: validationSchema,
+        } : {
+            rentalStartDate: new Date().toISOString().slice(0, 10),
+            rentalEndDate: new Date().toISOString().slice(0, 10),
+        };
+    };
+
+    const formik = useFormik({
+        initialValues: getInitialValues(),
+        validationSchema: rentalID ? editRentalValidationSchema : newRentalValidationSchema,
         onSubmit: values => {
             alert(JSON.stringify(values, null, 2));
         },
     });
+
+    const handleChangeRentalDate = () => {
+        let difference = new Date(formik.values.rentalEndDate).getTime() - new Date(formik.values.rentalStartDate).getTime();
+        setRentalCost(props.price * (Math.ceil(difference / (1000 * 3600 * 24))+1));
+    };
 
     useEffect(() => {
         handleChangeRentalDate();
@@ -50,13 +73,36 @@ export default function ChangeCarRentalDialog(props){
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    const handleChangeRentalDate = () => {
-        let difference = new Date(formik.values.rentalEndDate).getTime() - new Date(formik.values.rentalStartDate).getTime();
-        setRentalCost(props.carPrice * (Math.ceil(difference / (1000 * 3600 * 24))+1));
+    const addCarRental = async () => {
+        axios.post('rental', {
+            carID: props.carID,
+            userID: userDetails.id,
+            startDate: formik.values.rentalStartDate,
+            addDate: new Date().toISOString().slice(0, 10),
+            endDate: formik.values.rentalEndDate
+        },{
+            headers: token
+        })
+            .then(async () => {
+                dispatch(showSnackbar("Car rental request submitted successfully", true));
+                handleCloseRentalDialog();
+                await delay(2000);
+                navigate('/my-rentals');
+            })
+            .catch((error) => {
+                console.log(error);
+                if (error.response.status === 404) {
+                    dispatch(showSnackbar("The specified car was not found", false));
+                } else if (error.response.status === 400) {
+                    dispatch(showSnackbar("Invalid car rental date range entered", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while attempting to rent the car. Please contact the administrator", false));
+                }
+            })
     };
 
     const updateCarRental = async () => {
-        axios.put('rental/'+props.rentalID, {
+        axios.put('rental/'+rentalID, {
             startDate: formik.values.rentalStartDate,
             endDate: formik.values.rentalEndDate
         },{
@@ -80,20 +126,21 @@ export default function ChangeCarRentalDialog(props){
             })
     };
 
+    const buttonOnClick = rentalID ? updateCarRental : addCarRental;
+
     return (
         <>
             <Button
                 variant="contained"
-                color="warning"
                 onClick={() => {
                     handleClickOpenRentalDialog();
                 }}
             >
-                <EditIcon fontSize="small" />
+                {props.icon}
             </Button>
 
             <Dialog open={openRentalDialog} onClose={handleCloseRentalDialog}>
-                <DialogTitle>Change rental date</DialogTitle>
+                <DialogTitle> {rentalID ? "Rent a car" : "Change rental date"} </DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{ mb: 2 }}>
                         Select the rental period, then confirm using the button
@@ -142,7 +189,7 @@ export default function ChangeCarRentalDialog(props){
                     </FormGroup>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={updateCarRental} disabled={!(formik.isValid)}>Update</Button>
+                    <Button onClick={buttonOnClick} disabled={!(formik.isValid)}> {buttonLabel} </Button>
                 </DialogActions>
             </Dialog>
         </>

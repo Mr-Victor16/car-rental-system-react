@@ -5,11 +5,12 @@ import {useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import DeleteIcon  from '@mui/icons-material/Delete';
-import RentalInfoDialog from "../components/RentalInfoDialog";
-import ChangeRentalStatusDialog from "../components/ChangeRentalStatusDialog";
+import RentalInfoDialog from "../components/CarRental/RentalInfoDialog";
+import ChangeRentalStatusDialog from "../components/CarRental/ChangeRentalStatusDialog";
 import {showSnackbar} from "../actions/snackbarActions";
-import ChangeCarRentalDialog from "../components/ChangeCarRentalDialog";
 import {getStatusName} from "../helpers/rentalStatusNames";
+import CarRentalDialog from "../components/CarRental/CarRentalDialog";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Rentals = () => {
     const dispatch = useDispatch();
@@ -123,11 +124,12 @@ const Rentals = () => {
                                                 rentalID={rental.id}
                                             />
                                             &nbsp;
-                                            <ChangeCarRentalDialog
+                                            <CarRentalDialog
                                                 rentalID={rental.id}
                                                 startDate={rental.startDate}
                                                 endDate={rental.endDate}
-                                                carPrice={rental.car.price}
+                                                price={rental.car.price}
+                                                icon={<EditIcon fontSize="small" />}
                                             />
                                             &nbsp;
                                             <Button

@@ -3,7 +3,7 @@ import axios from '../lib/axiosConfig';
 import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import AuthHeader from "../services/authHeader";
-import RentalInfoDialog from "../components/RentalInfoDialog";
+import RentalInfoDialog from "../components/CarRental/RentalInfoDialog";
 import {showSnackbar} from "../actions/snackbarActions";
 import {getStatusName} from "../helpers/rentalStatusNames";
 

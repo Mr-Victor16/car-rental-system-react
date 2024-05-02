@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from '../lib/axiosConfig';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {TextField, Typography, Box, Select, Container, FormGroup, InputLabel, Button, Grid, MenuItem, FormHelperText, FormControl} from '@mui/material';
 import {useDispatch} from "react-redux";
 import AuthHeader from "../services/authHeader";
@@ -9,33 +9,19 @@ import * as Yup from "yup";
 import {useFormik} from "formik";
 import {getFuelTypeName} from "../helpers/fuelTypes";
 
-const AddCar = () => {
+const CarForm = () => {
+    const dispatch = useDispatch();
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
     const maxYear = new Date().getFullYear();
-    const dispatch = useDispatch();
     const token = AuthHeader();
+    let { id } = useParams();
+    const buttonLabel = id ? 'Save changes' : 'Add car';
 
     useEffect(() => {
-        axios.get('fuels')
-            .then(async (response) => {
-                if (response.data.length === 0) {
-                    dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
-                    await delay(2000);
-                    navigate('/', {replace: true});
-                } else {
-                    setFuelList(response.data);
-                }
-            })
-            .catch(async (error) => {
-                console.log(error);
-                dispatch(showSnackbar("Error occurred while fetching the list of fuel types", false));
-                await delay(2000);
-                navigate('/', {replace: true});
-            })
-    }, []);
-
-    const delay = ms => new Promise(res => setTimeout(res, ms));
+        getFuelList();
+        if (id != null) getCarInfo();
+    }, [id]);
 
     const validationSchema = Yup.object({
         horsePower: Yup.number()
@@ -108,6 +94,88 @@ const AddCar = () => {
             })
     }
 
+    const getCarInfo = () => {
+        axios.get('car/'+id, {
+            headers: token
+        })
+            .then(async (response) => {
+                if(response.data.length === 0){
+                    dispatch(showSnackbar("The specified car was not found", false));
+                    await delay(2000);
+                    navigate("../car/add");
+                } else {
+                    await formik.setValues({
+                        ...formik.values,
+                        horsePower: response.data.horsePower,
+                        price: response.data.price,
+                        mileage: response.data.mileage,
+                        brand: response.data.brand.name,
+                        model: response.data.model.name,
+                        capacity: response.data.capacity,
+                        fuelType: response.data.fuelType.id,
+                        year: response.data.year
+                    });
+                }
+            })
+            .catch(async (error) => {
+                console.log(error);
+                dispatch(showSnackbar("Error occurred while retrieving car information", false));
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
+    };
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const editCar = async () => {
+        axios.put('car/' + id, {
+            horsePower: formik.values.horsePower,
+            price: formik.values.price,
+            year: formik.values.year,
+            mileage: formik.values.mileage,
+            brand: formik.values.brand,
+            model: formik.values.model,
+            capacity: formik.values.capacity,
+            fuelType: formik.values.fuelType
+        }, {
+            headers: token,
+        })
+            .then(async () => {
+                dispatch(showSnackbar("Car information has been successfully updated", true));
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
+            .catch((error) => {
+                console.log(error);
+                if (error.response.status === 404) {
+                    dispatch(showSnackbar("The specified car was not found", false));
+                } else {
+                    dispatch(showSnackbar("Error occurred while updating car information", false));
+                }
+            })
+    }
+
+    const buttonOnClick = id ? editCar : addCar;
+
+    const getFuelList = () => {
+        axios.get('fuels')
+            .then(async (response) => {
+                if (response.data.length === 0) {
+                    dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
+                    await delay(2000);
+                    navigate('/', {replace: true});
+                } else {
+                    setFuelList(response.data);
+                }
+            })
+            .catch(async (error) => {
+                console.log(error);
+                dispatch(showSnackbar("Error occurred while retrieving the list of fuel types", false));
+                await delay(2000);
+                navigate('/', {replace: true});
+            })
+    };
+
     return (
         <Container maxWidth="md">
             <Box
@@ -119,7 +187,9 @@ const AddCar = () => {
             >
                 <Grid container spacing={2}>
                     <Grid item xs={12} alignItems={"center"}>
-                        <Typography variant='h4' align='center'>Add a new car</Typography>
+                        <Typography variant='h4' align='center'>
+                            { id ? 'Edit car information' : 'Add a new car' }
+                        </Typography>
                     </Grid>
                     <Grid item xs={6}>
                         <FormGroup>
@@ -254,7 +324,7 @@ const AddCar = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" onClick={addCar} disabled={!(formik.isValid && formik.dirty)} fullWidth>Add car</Button>
+                        <Button variant="contained" onClick={buttonOnClick} disabled={!(formik.isValid && formik.dirty)} fullWidth>{buttonLabel}</Button>
                     </Grid>
                 </Grid>
             </Box>
@@ -262,4 +332,4 @@ const AddCar = () => {
     );
 };
 
-export default AddCar;
+export default CarForm;

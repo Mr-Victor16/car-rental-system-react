@@ -8,9 +8,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import AuthHeader from "../services/authHeader";
 import ChangeImageDialog from "../components/ChangeImageDialog";
-import CarRentalDialog from "../components/CarRentalDialog";
+import CarRentalDialog from "../components/CarRental/CarRentalDialog";
 import {showSnackbar} from "../actions/snackbarActions";
 import {getFuelTypeName} from "../helpers/fuelTypes";
+import CarRentalIcon from "@mui/icons-material/CarRental";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -83,7 +84,7 @@ const Home = () => {
                                     </CardContent>
                                     <CardActions style={{justifyContent: 'center'}}>
                                         {userDetails.token !== "" && (
-                                            <CarRentalDialog carID={car.id} price={car.price} />
+                                            <CarRentalDialog carID={car.id} price={car.price} icon={<CarRentalIcon fontSize="small" />} />
                                         )}
 
                                         {userDetails.roles.includes("ROLE_ADMIN") && (
