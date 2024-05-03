@@ -52,13 +52,12 @@ const Register = () => {
         },
     });
 
+    const { username, email, password } = formik.values;
+
     const signUp = async () => {
-        axios.post("auth/signup", {
-            username: formik.values.username,
-            email: formik.values.email,
-            password: formik.values.password
-        })
+        axios.post("auth/signup", { username, email, password })
             .then(() => {
+                dispatch(showSnackbar("Account successfully created.", true));
                 navigate('/login', {replace: true});
             })
             .catch(function (error) {

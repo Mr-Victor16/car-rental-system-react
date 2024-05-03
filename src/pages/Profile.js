@@ -51,8 +51,7 @@ const Profile = () => {
     const editPassword = () => {
         axios.put('user/changePassword', {
             userID: userDetails.id,
-            oldPassword: formik.values.oldPassword,
-            newPassword: formik.values.newPassword,
+            ...formik.values
         },{
             headers: token
         })

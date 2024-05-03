@@ -38,7 +38,7 @@ const Login = () => {
     });
 
     const logIn = async () => {
-        axios.post("auth/signin", { username: formik.values.username, password: formik.values.password })
+        axios.post("auth/signin", formik.values)
             .then(response => {
                 if (response.data.token) {
                     dispatch(login(response.data));

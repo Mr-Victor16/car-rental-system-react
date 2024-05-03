@@ -67,7 +67,7 @@ const MyRentals = () => {
                                         </TableCell>
                                         <TableCell align="center">{rental.addDate}</TableCell>
                                         <TableCell align="center">{rental.startDate + ' - ' + rental.endDate}</TableCell>
-                                        <TableCell align="center">{rental.car.brand.name + ' ' + rental.car.model.name}</TableCell>
+                                        <TableCell align="center">{rental.carBrand + ' ' + rental.carModel}</TableCell>
                                         <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
                                         <TableCell align="center">{rental.price + ' PLN'}</TableCell>
                                         <TableCell align="center"><RentalInfoDialog statusHistory={rental.statusHistory} /></TableCell>

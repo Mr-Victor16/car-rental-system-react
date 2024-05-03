@@ -110,10 +110,10 @@ const Rentals = () => {
                                         </TableCell>
                                         <TableCell align="center">{rental.addDate}</TableCell>
                                         <TableCell align="center">{rental.startDate + ' - ' + rental.endDate}</TableCell>
-                                        <TableCell align="center">{rental.car.brand.name + ' ' + rental.car.model.name}</TableCell>
+                                        <TableCell align="center">{rental.carBrand + ' ' + rental.carModel}</TableCell>
                                         <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
                                         <TableCell align="center">{rental.price + ' PLN'}</TableCell>
-                                        <TableCell align="center">{rental.user.username}</TableCell>
+                                        <TableCell align="center">{rental.username}</TableCell>
                                         <TableCell align="center">
                                             <RentalInfoDialog statusHistory={rental.statusHistory} />
                                             &nbsp;
@@ -128,7 +128,7 @@ const Rentals = () => {
                                                 rentalID={rental.id}
                                                 startDate={rental.startDate}
                                                 endDate={rental.endDate}
-                                                price={rental.car.price}
+                                                price={rental.carPrice}
                                                 icon={<EditIcon fontSize="small" />}
                                             />
                                             &nbsp;

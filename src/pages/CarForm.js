@@ -8,12 +8,13 @@ import {showSnackbar} from "../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import {getFuelTypeName} from "../helpers/fuelTypes";
+import {getActualDate} from "../helpers/actualDate";
 
 const CarForm = () => {
     const dispatch = useDispatch();
     const [fuelList, setFuelList] = useState([]);
     let navigate = useNavigate();
-    const maxYear = new Date().getFullYear();
+    const maxYear = new Date(getActualDate()).getFullYear();
     const token = AuthHeader();
     let { id } = useParams();
     const buttonLabel = id ? 'Save changes' : 'Add car';
@@ -72,14 +73,7 @@ const CarForm = () => {
 
     const addCar = async () => {
         axios.post('car', {
-            horsePower: formik.values.horsePower,
-            price: formik.values.price,
-            year: formik.values.year,
-            mileage: formik.values.mileage,
-            brand: formik.values.brand,
-            model: formik.values.model,
-            capacity: formik.values.capacity,
-            fuelType: formik.values.fuelType
+            ...formik.values
         },{
             headers: token,
         })
@@ -105,7 +99,6 @@ const CarForm = () => {
                     navigate("../car/add");
                 } else {
                     await formik.setValues({
-                        ...formik.values,
                         horsePower: response.data.horsePower,
                         price: response.data.price,
                         mileage: response.data.mileage,
@@ -129,14 +122,7 @@ const CarForm = () => {
 
     const editCar = async () => {
         axios.put('car/' + id, {
-            horsePower: formik.values.horsePower,
-            price: formik.values.price,
-            year: formik.values.year,
-            mileage: formik.values.mileage,
-            brand: formik.values.brand,
-            model: formik.values.model,
-            capacity: formik.values.capacity,
-            fuelType: formik.values.fuelType
+            ...formik.values
         }, {
             headers: token,
         })

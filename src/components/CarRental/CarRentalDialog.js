@@ -7,23 +7,26 @@ import axios from '../../lib/axiosConfig';
 import {showSnackbar} from "../../actions/snackbarActions";
 import * as Yup from "yup";
 import {useFormik} from "formik";
+import {getActualDate} from "../../helpers/actualDate";
+
+const addDate = getActualDate();
 
 const newRentalValidationSchema = Yup.object({
-    rentalStartDate: Yup.date()
+    startDate: Yup.date()
         .required("Rental start date is required")
-        .min(new Date(Date.now()-86400000), "Rental start date cannot be in the past"),
-    rentalEndDate: Yup.date()
+        .min(new Date(addDate), "Rental start date cannot be in the past"),
+    endDate: Yup.date()
         .required('Rental end date is required')
-        .min(Yup.ref('rentalStartDate'), 'End date must be after or equal to start date')
+        .min(Yup.ref('startDate'), 'End date must be after or equal to start date')
 });
 
 const editRentalValidationSchema = Yup.object({
-    rentalStartDate: Yup.date()
+    startDate: Yup.date()
         .required("Rental start date is required")
-        .max(Yup.ref('rentalEndDate'), 'Start date must be before or equal to end date'),
-    rentalEndDate: Yup.date()
+        .max(Yup.ref('endDate'), 'Start date must be before or equal to end date'),
+    endDate: Yup.date()
         .required('Rental end date is required')
-        .min(Yup.ref('rentalStartDate'), 'End date must be after or equal to start date')
+        .min(Yup.ref('startDate'), 'End date must be after or equal to start date')
 });
 
 export default function CarRentalDialog(props){
@@ -35,14 +38,16 @@ export default function CarRentalDialog(props){
     const rentalID = props.rentalID;
     const [rentalCost, setRentalCost] = useState(0);
     const buttonLabel = rentalID ? "Update" : "Send request";
+    const dialogTitle = rentalID ? "Change rental date" : "Rent a car";
+    const carID = props.carID;
 
     const getInitialValues = () => {
         return rentalID ? {
-            rentalStartDate: props.startDate,
-            rentalEndDate: props.endDate,
+            startDate: props.startDate,
+            endDate: props.endDate,
         } : {
-            rentalStartDate: new Date().toISOString().slice(0, 10),
-            rentalEndDate: new Date().toISOString().slice(0, 10),
+            startDate: addDate,
+            endDate: addDate,
         };
     };
 
@@ -55,13 +60,13 @@ export default function CarRentalDialog(props){
     });
 
     const handleChangeRentalDate = () => {
-        let difference = new Date(formik.values.rentalEndDate).getTime() - new Date(formik.values.rentalStartDate).getTime();
+        let difference = new Date(formik.values.endDate).getTime() - new Date(formik.values.startDate).getTime();
         setRentalCost(props.price * (Math.ceil(difference / (1000 * 3600 * 24))+1));
     };
 
     useEffect(() => {
         handleChangeRentalDate();
-    }, [formik.values.rentalStartDate, formik.values.rentalEndDate]);
+    }, [formik.values.startDate, formik.values.endDate]);
 
     const handleClickOpenRentalDialog = () => {
         setOpenRentalDialog(true);
@@ -75,11 +80,7 @@ export default function CarRentalDialog(props){
 
     const addCarRental = async () => {
         axios.post('rental', {
-            carID: props.carID,
-            userID: userDetails.id,
-            startDate: formik.values.rentalStartDate,
-            addDate: new Date().toISOString().slice(0, 10),
-            endDate: formik.values.rentalEndDate
+            carID, userID: userDetails.id, ...formik.values, addDate
         },{
             headers: token
         })
@@ -103,8 +104,7 @@ export default function CarRentalDialog(props){
 
     const updateCarRental = async () => {
         axios.put('rental/'+rentalID, {
-            startDate: formik.values.rentalStartDate,
-            endDate: formik.values.rentalEndDate
+            ...formik.values
         },{
             headers: token
         })
@@ -140,7 +140,7 @@ export default function CarRentalDialog(props){
             </Button>
 
             <Dialog open={openRentalDialog} onClose={handleCloseRentalDialog}>
-                <DialogTitle> {rentalID ? "Rent a car" : "Change rental date"} </DialogTitle>
+                <DialogTitle> {dialogTitle} </DialogTitle>
                 <DialogContent>
                     <DialogContentText sx={{ mb: 2 }}>
                         Select the rental period, then confirm using the button
@@ -148,14 +148,14 @@ export default function CarRentalDialog(props){
                     <FormGroup sx={{ mb: 1 }}>
                         <InputLabel>Rental start date</InputLabel>
                         <TextField
-                            id={"rentalStartDate"}
+                            id={"startDate"}
                             type={"date"}
-                            name={"rentalStartDate"}
-                            value={formik.values.rentalStartDate}
+                            name={"startDate"}
+                            value={formik.values.startDate}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            error={formik.touched.rentalStartDate && Boolean(formik.errors.rentalStartDate)}
-                            helperText={formik.touched.rentalStartDate && formik.errors.rentalStartDate}
+                            error={formik.touched.startDate && Boolean(formik.errors.startDate)}
+                            helperText={formik.touched.startDate && formik.errors.startDate}
                             margin="dense"
                             variant="standard"
                             fullWidth
@@ -164,14 +164,14 @@ export default function CarRentalDialog(props){
                     <FormGroup sx={{ mb: 1 }}>
                         <InputLabel>Rental end date</InputLabel>
                         <TextField
-                            id={"rentalEndDate"}
+                            id={"endDate"}
                             type={"date"}
-                            name={"rentalEndDate"}
-                            value={formik.values.rentalEndDate}
+                            name={"endDate"}
+                            value={formik.values.endDate}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            error={formik.touched.rentalEndDate && Boolean(formik.errors.rentalEndDate)}
-                            helperText={formik.touched.rentalEndDate && formik.errors.rentalEndDate}
+                            error={formik.touched.endDate && Boolean(formik.errors.endDate)}
+                            helperText={formik.touched.endDate && formik.errors.endDate}
                             margin="dense"
                             variant="standard"
                             fullWidth

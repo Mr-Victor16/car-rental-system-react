@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
         .required("Password field cannot be empty")
         .min(5, "Password is too short. Please enter a password between 5-120 characters long")
         .max(120, "Password is too long. Please enter a password between 5-120 characters long"),
-    accountType: Yup.string()
+    role: Yup.string()
         .required("You must select a user type"),
     email: Yup.string()
         .email('Invalid email')
@@ -37,7 +37,7 @@ const AddUser = () => {
         initialValues: {
             username: "",
             password: "",
-            accountType: "user",
+            role: "user",
             email: "",
         },
         validationSchema: validationSchema,
@@ -48,10 +48,7 @@ const AddUser = () => {
 
     const addUser = async () => {
         axios.post('user', {
-            username: formik.values.username,
-            email: formik.values.email,
-            password: formik.values.password,
-            role: formik.values.accountType
+            ...formik.values
         },{
             headers: token,
         })
@@ -132,18 +129,18 @@ const AddUser = () => {
                             <InputLabel>Account type</InputLabel>
                             <Select
                                 label="Account type"
-                                id={"accountType"}
-                                name={"accountType"}
-                                value={formik.values.accountType}
+                                id={"role"}
+                                name={"role"}
+                                value={formik.values.role}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                error={formik.touched.accountType && Boolean(formik.errors.accountType)}
+                                error={formik.touched.role && Boolean(formik.errors.role)}
                             >
                                 <MenuItem key={1} value={"admin"}>Administrator</MenuItem>
                                 <MenuItem key={2} value={"user"}>User</MenuItem>
                             </Select>
-                            {formik.touched.accountType && Boolean(formik.errors.accountType) && (
-                                <FormHelperText>{formik.touched.accountType && formik.errors.accountType}</FormHelperText>
+                            {formik.touched.role && Boolean(formik.errors.role) && (
+                                <FormHelperText>{formik.touched.role && formik.errors.role}</FormHelperText>
                             )}
                         </FormControl>
                     </Grid>
