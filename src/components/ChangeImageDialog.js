@@ -62,6 +62,7 @@ export default function ChangeImageDialog(props) {
             <Button
                 variant="contained"
                 color="secondary"
+                size="small"
                 onClick={() => {
                     handleClickOpen();
                 }}

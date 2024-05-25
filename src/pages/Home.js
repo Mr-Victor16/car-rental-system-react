@@ -63,7 +63,7 @@ const Home = () => {
                 {cars && cars.length > 0 ? (
                     cars.map((car, index) => {
                         return (
-                            <Grid item xs={3} key={index}>
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                                 <Card>
                                     <CardMedia
                                         component="img"
@@ -82,37 +82,40 @@ const Home = () => {
                                             <Item>Price per day: {car.price + " PLN"}</Item>
                                         </Stack>
                                     </CardContent>
-                                    <CardActions style={{justifyContent: 'center'}}>
-                                        {userDetails.token !== "" && (
-                                            <CarRentalDialog carID={car.id} price={car.price} icon={<CarRentalIcon fontSize="small" />} />
-                                        )}
+                                    <CardActions sx={{justifyContent: 'center'}}>
+                                        <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap">
+                                            {userDetails.token !== "" && (
+                                                <CarRentalDialog carID={car.id} price={car.price} icon={<CarRentalIcon fontSize="small" />} />
+                                            )}
 
-                                        {userDetails.roles.includes("ROLE_ADMIN") && (
-                                            <>
-                                                &nbsp;
-                                                <ChangeImageDialog carID={car.id} cars={[setCars]} />
+                                            {userDetails.roles.includes("ROLE_ADMIN") && (
+                                                <>
+                                                    <ChangeImageDialog carID={car.id} cars={[setCars]} />
 
-                                                <Button
-                                                    variant="contained"
-                                                    color="warning"
-                                                    onClick={() => {
-                                                        navigate(`/car/edit/${car.id}`)
-                                                    }}
-                                                >
-                                                    <EditIcon fontSize="small" />
-                                                </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="warning"
+                                                        size="small"
+                                                        onClick={() => {
+                                                            navigate(`/car/edit/${car.id}`)
+                                                        }}
+                                                    >
+                                                        <EditIcon fontSize="small" />
+                                                    </Button>
 
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    onClick={() => {
-                                                        deleteCar(car.id);
-                                                    }}
-                                                >
-                                                    <DeleteIcon fontSize="small" />
-                                                </Button>
-                                            </>
-                                        )}
+                                                    <Button
+                                                        variant="contained"
+                                                        color="error"
+                                                        size="small"
+                                                        onClick={() => {
+                                                            deleteCar(car.id);
+                                                        }}
+                                                    >
+                                                        <DeleteIcon fontSize="small" />
+                                                    </Button>
+                                                </>
+                                            )}
+                                        </Stack>
                                     </CardActions>
                                 </Card>
                             </Grid>

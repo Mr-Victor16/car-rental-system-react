@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from '../lib/axiosConfig';
-import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
+import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button, Card, CardContent, CardActions, Grid, useMediaQuery} from '@mui/material';
 import {useDispatch, useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
@@ -16,6 +16,7 @@ const UserList = () => {
     const token = AuthHeader();
     let navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
     const getUsers = () => {
         axios.get('user',{
@@ -80,14 +81,18 @@ const UserList = () => {
         <Container maxWidth="lg">
             <Box
                 component="form"
-                sx={{'& .MuiTextField-root': { m: 1 }}}
+                sx={{
+                    '& .MuiTextField-root': { m: 1 },
+                    mt: { xs: 5, md: 10 },
+                    mb: { xs: 5, md: 10 }
+                }}
                 noValidate
                 autoComplete="off"
-                marginTop={20}
             >
                 <Typography variant='h4' align='center'>User list</Typography>
                 <Button
                     variant="contained"
+                    sx={{ mt: 2, mb: 2 }}
                     onClick={() => {
                         navigate('/user/add')
                     }}
@@ -95,61 +100,109 @@ const UserList = () => {
                     Add user
                 </Button>
                 <Stack spacing={2}>
-
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell align="center">Username</TableCell>
-                                    <TableCell align="center">E-mail</TableCell>
-                                    <TableCell align="center">Role</TableCell>
-                                    <TableCell align="center">Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {users && users.length > 1 ? (
-                                    users
-                                        .filter(user => user.id !== 1)
-                                        .map((filteredUser, index) => (
-                                        <TableRow
-                                            key={filteredUser.id}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell component="th" scope="row">{index+1}</TableCell>
-                                            <TableCell align="center">{filteredUser.username}</TableCell>
-                                            <TableCell align="center">{filteredUser.email}</TableCell>
-                                            <TableCell align="center">{getUserTypeName(filteredUser.role.name)}</TableCell>
-                                            <TableCell align="center">
-                                                <Button
-                                                    variant="contained"
-                                                    color="secondary"
-                                                    onClick={() => {
-                                                        changeUserRole(filteredUser.id, filteredUser.role.id);
-                                                    }}
-                                                >
-                                                    <BookmarkIcon fontSize="small" />
-                                                </Button>
-                                                &nbsp;
-                                                {userDetails.id !== filteredUser.id &&
+                    {isSmallScreen ? (
+                        <Grid container spacing={2}>
+                            {users && users.length > 1 ? (
+                                users
+                                    .filter(user => user.id !== 1)
+                                    .map((filteredUser) => (
+                                        <Grid item xs={12} key={filteredUser.id}>
+                                            <Card>
+                                                <CardContent>
+                                                    <Typography variant="h6">{filteredUser.username}</Typography>
+                                                    <Typography variant="body2" color="textSecondary">E-mail: {filteredUser.email}</Typography>
+                                                    <Typography variant="body2" color="textSecondary">Role: {getUserTypeName(filteredUser.role.name)}</Typography>
+                                                </CardContent>
+                                                <CardActions>
                                                     <Button
                                                         variant="contained"
-                                                        color="error"
+                                                        color="secondary"
+                                                        size="small"
                                                         onClick={() => {
-                                                            deleteUser(filteredUser.id);
+                                                            changeUserRole(filteredUser.id, filteredUser.role.id);
                                                         }}
                                                     >
-                                                        <DeleteIcon fontSize="small" />
+                                                        <BookmarkIcon fontSize="small" />
                                                     </Button>
-                                                }
-                                            </TableCell>
-                                        </TableRow>
-                                    ))) : (
-                                    <TableRow><TableCell colSpan={8}><h2 align="center">No users to display</h2></TableCell></TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                                    &nbsp;
+                                                    {userDetails.id !== filteredUser.id &&
+                                                        <Button
+                                                            variant="contained"
+                                                            color="error"
+                                                            size="small"
+                                                            onClick={() => {
+                                                                deleteUser(filteredUser.id);
+                                                            }}
+                                                        >
+                                                            <DeleteIcon fontSize="small" />
+                                                        </Button>
+                                                    }
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+                                    ))
+                            ) : (
+                                <Typography variant="h6" align="center">No users to display</Typography>
+                            )}
+                        </Grid>
+                    ) : (
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell align="center">Username</TableCell>
+                                        <TableCell align="center">E-mail</TableCell>
+                                        <TableCell align="center">Role</TableCell>
+                                        <TableCell align="center">Action</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {users && users.length > 1 ? (
+                                        users
+                                            .filter(user => user.id !== 1)
+                                            .map((filteredUser, index) => (
+                                                <TableRow
+                                                    key={filteredUser.id}
+                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                >
+                                                    <TableCell component="th" scope="row">{index+1}</TableCell>
+                                                    <TableCell align="center">{filteredUser.username}</TableCell>
+                                                    <TableCell align="center">{filteredUser.email}</TableCell>
+                                                    <TableCell align="center">{getUserTypeName(filteredUser.role.name)}</TableCell>
+                                                    <TableCell align="center">
+                                                        <Button
+                                                            variant="contained"
+                                                            color="secondary"
+                                                            size="small"
+                                                            onClick={() => {
+                                                                changeUserRole(filteredUser.id, filteredUser.role.id);
+                                                            }}
+                                                        >
+                                                            <BookmarkIcon fontSize="small" />
+                                                        </Button>
+                                                        &nbsp;
+                                                        {userDetails.id !== filteredUser.id &&
+                                                            <Button
+                                                                variant="contained"
+                                                                color="error"
+                                                                size="small"
+                                                                onClick={() => {
+                                                                    deleteUser(filteredUser.id);
+                                                                }}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </Button>
+                                                        }
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))) : (
+                                        <TableRow><TableCell colSpan={8}><h2 align="center">No users to display</h2></TableCell></TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
                 </Stack>
             </Box>
         </Container>

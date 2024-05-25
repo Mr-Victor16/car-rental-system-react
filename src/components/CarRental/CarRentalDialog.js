@@ -132,6 +132,7 @@ export default function CarRentalDialog(props){
         <>
             <Button
                 variant="contained"
+                size="small"
                 onClick={() => {
                     handleClickOpenRentalDialog();
                 }}

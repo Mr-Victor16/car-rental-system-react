@@ -77,7 +77,7 @@ export default function AdminMenuList() {
                                     >
                                         <MenuItem onClick={handleClose} component={Link} to="car/list">Car list</MenuItem>
                                         <MenuItem onClick={handleClose} component={Link} to="rentals">Rental list</MenuItem>
-                                        <MenuItem onClick={handleClose} component={Link} to="users">User management</MenuItem>
+                                        <MenuItem onClick={handleClose} component={Link} to="users">User list</MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
                             </Paper>

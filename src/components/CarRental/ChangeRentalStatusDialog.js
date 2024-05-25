@@ -68,6 +68,7 @@ export default function ChangeRentalStatusDialog(props){
             <Button
                 variant="contained"
                 color="primary"
+                size="small"
                 onClick={() => {
                     handleClickOpen();
                 }}

@@ -1,7 +1,7 @@
 # Car Rental System [Frontend]
 Car Rental System is a simple system designed to meet the needs of companies renting cars for days. The app allows users to browse cars available for hire and send requests for car availability on the indicated date, along with a cost calculation. Administrators can easily respond to inquiries and manage cars and users.
 
-The project was created for the purpose of learning to develop the frontend part of the application using React.js and MaterialUI.
+The project was created for the purpose of learning to develop the frontend part of the application using React.js and MaterialUI. Responsive pages were ensured through the use of media queries.
 
 **This repository contains only the frontend. Backend of the project - [car-rental-system-spring](https://github.com/Mr-Victor16/car-rental-system-spring)**  
 _The proper functioning of the frontend requires the backend to be running._

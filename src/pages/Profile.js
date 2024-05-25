@@ -79,7 +79,10 @@ const Profile = () => {
         <Container maxWidth="sm">
             <Box
                 component="form"
-                sx={{'& .MuiTextField-root': { m: 1 }}}
+                sx={{
+                    '& .MuiTextField-root': { m: 1 },
+                    marginTop: { xs: 5, md: 10 }
+                }}
                 noValidate
                 autoComplete="off"
                 marginTop={20}

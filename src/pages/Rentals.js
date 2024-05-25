@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from '../lib/axiosConfig';
-import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button} from '@mui/material';
+import {Typography, Box, Stack, Container, TableRow, TableCell, TableHead, TableBody, Table, TableContainer, Paper, Button, useMediaQuery, Grid, Card, CardContent, CardActions} from '@mui/material';
 import {useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../services/authHeader";
@@ -18,6 +18,7 @@ const Rentals = () => {
     let navigate = useNavigate();
     const [statusList, setStatusList] = useState([]);
     const [rentals, setRentals] = useState([]);
+    const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
     const getRentals = () => {
         axios.get('rentals',{
@@ -76,79 +77,133 @@ const Rentals = () => {
         <Container maxWidth="lg">
             <Box
                 component="form"
-                sx={{'& .MuiTextField-root': { m: 1 }}}
+                sx={{
+                    '& .MuiTextField-root': { m: 1 },
+                    mt: { xs: 5, md: 10 },
+                    mb: { xs: 5, md: 10 }
+                }}
                 noValidate
                 autoComplete="off"
-                marginTop={20}
             >
+                <Typography variant='h4' align='center'>Rental list</Typography>
                 <Stack spacing={2}>
-                    <Typography variant='h4' align='center'>Rental list</Typography>
-
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell align="center">Date created</TableCell>
-                                    <TableCell align="center">Rental period</TableCell>
-                                    <TableCell align="center">Car</TableCell>
-                                    <TableCell align="center">Status</TableCell>
-                                    <TableCell align="center">Cost</TableCell>
-                                    <TableCell align="center">Customer</TableCell>
-                                    <TableCell align="center">Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rentals && rentals.length > 0 ? (
-                                    rentals.map((rental, index) => (
-                                    <TableRow
-                                        key={rental.id}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell component="th" scope="row">
-                                            {index+1}
-                                        </TableCell>
-                                        <TableCell align="center">{rental.addDate}</TableCell>
-                                        <TableCell align="center">{rental.startDate + ' - ' + rental.endDate}</TableCell>
-                                        <TableCell align="center">{rental.carBrand + ' ' + rental.carModel}</TableCell>
-                                        <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
-                                        <TableCell align="center">{rental.price + ' PLN'}</TableCell>
-                                        <TableCell align="center">{rental.username}</TableCell>
-                                        <TableCell align="center">
-                                            <RentalInfoDialog statusHistory={rental.statusHistory} />
-                                            &nbsp;
-                                            <ChangeRentalStatusDialog
-                                                setRentals={[setRentals]}
-                                                statusList={statusList}
-                                                status={rental.rentalStatus}
-                                                rentalID={rental.id}
-                                            />
-                                            &nbsp;
-                                            <CarRentalDialog
-                                                rentalID={rental.id}
-                                                startDate={rental.startDate}
-                                                endDate={rental.endDate}
-                                                price={rental.carPrice}
-                                                icon={<EditIcon fontSize="small" />}
-                                            />
-                                            &nbsp;
-                                            <Button
-                                                variant="contained"
-                                                color="error"
-                                                onClick={() => {
-                                                    deleteRental(rental.id);
-                                                }}
-                                            >
-                                                <DeleteIcon fontSize="small" />
-                                            </Button>
-                                        </TableCell>
+                    {isSmallScreen ? (
+                        <Grid container spacing={2}>
+                            {rentals && rentals.length > 0 ? (
+                                rentals.map((rental) => (
+                                    <Grid item xs={12} key={rental.id}>
+                                        <Card>
+                                            <CardContent>
+                                                <Typography variant="h6">{rental.carBrand + ' ' + rental.carModel} ({rental.addDate})</Typography>
+                                                <Typography variant="body2" color="textSecondary">Customer: {rental.username}</Typography>
+                                                <Typography variant="body2" color="textSecondary">Cost: {rental.price + ' PLN'}</Typography>
+                                                <Typography variant="body2" color="textSecondary">Rental period: {rental.startDate + ' - ' + rental.endDate}</Typography>
+                                                <Typography variant="body2" color="textSecondary">Status: {getStatusName(rental.rentalStatus.name)}</Typography>
+                                            </CardContent>
+                                            <CardActions>
+                                                <RentalInfoDialog statusHistory={rental.statusHistory} />
+                                                &nbsp;
+                                                <ChangeRentalStatusDialog
+                                                    setRentals={[setRentals]}
+                                                    statusList={statusList}
+                                                    status={rental.rentalStatus}
+                                                    rentalID={rental.id}
+                                                />
+                                                &nbsp;
+                                                <CarRentalDialog
+                                                    rentalID={rental.id}
+                                                    startDate={rental.startDate}
+                                                    endDate={rental.endDate}
+                                                    price={rental.carPrice}
+                                                    icon={<EditIcon fontSize="small" />}
+                                                />
+                                                &nbsp;
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        deleteRental(rental.id);
+                                                    }}
+                                                >
+                                                    <DeleteIcon fontSize="small" />
+                                                </Button>
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                ))
+                            ) : (
+                                <Typography variant="h6" align="center">No rentals to display</Typography>
+                            )}
+                        </Grid>
+                    ) : (
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell align="center">Date created</TableCell>
+                                        <TableCell align="center">Rental period</TableCell>
+                                        <TableCell align="center">Car</TableCell>
+                                        <TableCell align="center">Status</TableCell>
+                                        <TableCell align="center">Cost</TableCell>
+                                        <TableCell align="center">Customer</TableCell>
+                                        <TableCell align="center">Action</TableCell>
                                     </TableRow>
-                                ))) : (
-                                    <TableRow><TableCell colSpan={8}><h2 align="center">No rentals to display</h2></TableCell></TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {rentals && rentals.length > 0 ? (
+                                        rentals.map((rental, index) => (
+                                        <TableRow
+                                            key={rental.id}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {index+1}
+                                            </TableCell>
+                                            <TableCell align="center">{rental.addDate}</TableCell>
+                                            <TableCell align="center">{rental.startDate + ' - ' + rental.endDate}</TableCell>
+                                            <TableCell align="center">{rental.carBrand + ' ' + rental.carModel}</TableCell>
+                                            <TableCell align="center">{getStatusName(rental.rentalStatus.name)}</TableCell>
+                                            <TableCell align="center">{rental.price + ' PLN'}</TableCell>
+                                            <TableCell align="center">{rental.username}</TableCell>
+                                            <TableCell align="center">
+                                                <RentalInfoDialog statusHistory={rental.statusHistory} />
+                                                &nbsp;
+                                                <ChangeRentalStatusDialog
+                                                    setRentals={[setRentals]}
+                                                    statusList={statusList}
+                                                    status={rental.rentalStatus}
+                                                    rentalID={rental.id}
+                                                />
+                                                &nbsp;
+                                                <CarRentalDialog
+                                                    rentalID={rental.id}
+                                                    startDate={rental.startDate}
+                                                    endDate={rental.endDate}
+                                                    price={rental.carPrice}
+                                                    icon={<EditIcon fontSize="small" />}
+                                                />
+                                                &nbsp;
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        deleteRental(rental.id);
+                                                    }}
+                                                >
+                                                    <DeleteIcon fontSize="small" />
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))) : (
+                                        <TableRow><TableCell colSpan={8}><h2 align="center">No rentals to display</h2></TableCell></TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
                 </Stack>
             </Box>
         </Container>

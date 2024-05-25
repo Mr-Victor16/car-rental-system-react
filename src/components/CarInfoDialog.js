@@ -25,6 +25,7 @@ export default function CarInfoDialog(props){
             <Button
                 variant="contained"
                 color="primary"
+                size="small"
                 onClick={() => {
                     handleClickOpen();
                 }}
@@ -32,7 +33,7 @@ export default function CarInfoDialog(props){
                 <InfoIcon fontSize="small" />
             </Button>
 
-            <Dialog open={openDialog} onClose={handleClose}>
+            <Dialog open={openDialog} onClose={handleClose} maxWidth="md" fullWidth>
                 <DialogTitle>{car.brand.name + ' ' + car.model.name + ' (' + car.year + ')'}</DialogTitle>
 
                 <DialogContent>
@@ -40,16 +41,16 @@ export default function CarInfoDialog(props){
                         <Grid item xs={12} md={12} align={"center"}>
                             <img
                                 src={"data:image/jpeg;base64,"+car.carImage.fileContent}
-                                height={250}
+                                style={{width: 'auto', height: 'auto', maxHeight: 250, maxWidth: '100%', margin: '0 auto'}}
                                 alt={car.brand.name + ' ' + car.model.name + ' photo'}
                                 loading="lazy"
                             />
                         </Grid>
 
-                        <GridItem xs={4} md={6} icon={<FuelIcon />} primaryText={"Fuel"} secondaryText={getFuelTypeName(car.fuelType.name)} />
-                        <GridItem xs={4} md={6} icon={<ServiceIcon />} primaryText={"Mileage"} secondaryText={car.mileage + ' km'} />
-                        <GridItem xs={4} md={6} icon={<CarIcon />} primaryText={"Engine"} secondaryText={car.capacity + ', ' + car.horsePower + ' HP'} />
-                        <GridItem xs={4} md={6} icon={<MoneyIcon />} primaryText={"Price per day"} secondaryText={car.price + ' PLN'} />
+                        <GridItem xs={12} md={6} icon={<FuelIcon />} primaryText={"Fuel"} secondaryText={getFuelTypeName(car.fuelType.name)} />
+                        <GridItem xs={12} md={6} icon={<ServiceIcon />} primaryText={"Mileage"} secondaryText={car.mileage + ' km'} />
+                        <GridItem xs={12} md={6} icon={<CarIcon />} primaryText={"Engine"} secondaryText={car.capacity + ', ' + car.horsePower + ' HP'} />
+                        <GridItem xs={12} md={6} icon={<MoneyIcon />} primaryText={"Price per day"} secondaryText={car.price + ' PLN'} />
                     </Grid>
                 </DialogContent>
                 <DialogActions>
