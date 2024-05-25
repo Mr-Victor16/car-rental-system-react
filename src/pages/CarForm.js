@@ -166,10 +166,13 @@ const CarForm = () => {
         <Container maxWidth="md">
             <Box
                 component="form"
-                sx={{'& .MuiTextField-root': { m: 1 }}}
+                sx={{
+                    '& .MuiTextField-root': { m: 1 },
+                    mt: { xs: 5, md: 10 },
+                    mb: { xs: 5, md: 10 }
+                }}
                 noValidate
                 autoComplete="off"
-                marginTop={10}
             >
                 <Grid container spacing={2}>
                     <Grid item xs={12} alignItems={"center"}>
@@ -177,7 +180,7 @@ const CarForm = () => {
                             { id ? 'Edit car information' : 'Add a new car' }
                         </Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"brand"}
@@ -191,7 +194,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"model"}
@@ -205,7 +208,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"capacity"}
@@ -220,7 +223,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"horsePower"}
@@ -236,7 +239,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"year"}
@@ -252,7 +255,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"mileage"}
@@ -268,7 +271,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"price"}
@@ -284,7 +287,7 @@ const CarForm = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormControl fullWidth>
                             <InputLabel>Fuel type</InputLabel>
                             <Select

@@ -86,7 +86,7 @@ const Rentals = () => {
                 autoComplete="off"
             >
                 <Typography variant='h4' align='center'>Rental list</Typography>
-                <Stack spacing={2}>
+                <Stack sx={{ whiteSpace: 'nowrap' }}>
                     {isSmallScreen ? (
                         <Grid container spacing={2}>
                             {rentals && rentals.length > 0 ? (

@@ -88,7 +88,7 @@ const CarList = () => {
                 >
                     Add car
                 </Button>
-                <Stack spacing={2}>
+                <Stack sx={{ whiteSpace: 'nowrap' }}>
                     {isSmallScreen ? (
                         <Grid container spacing={2}>
                             {cars && cars.length > 0 ? (

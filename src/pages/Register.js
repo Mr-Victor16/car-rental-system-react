@@ -77,7 +77,7 @@ const Register = () => {
                 sx={{'& .MuiTextField-root': { m: 1 }}}
                 noValidate
                 autoComplete="off"
-                marginTop={20}
+                marginTop={10}
             >
                 <Stack spacing={2}>
                     <Typography variant='h3' align='center'>Registration</Typography>

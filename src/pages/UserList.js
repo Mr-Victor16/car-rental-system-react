@@ -99,7 +99,7 @@ const UserList = () => {
                 >
                     Add user
                 </Button>
-                <Stack spacing={2}>
+                <Stack sx={{ whiteSpace: 'nowrap' }}>
                     {isSmallScreen ? (
                         <Grid container spacing={2}>
                             {users && users.length > 1 ? (

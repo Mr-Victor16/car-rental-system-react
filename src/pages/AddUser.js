@@ -71,16 +71,19 @@ const AddUser = () => {
         <Container maxWidth="md">
             <Box
                 component="form"
-                sx={{'& .MuiTextField-root': { m: 1 }}}
+                sx={{
+                    '& .MuiTextField-root': { m: 1 },
+                    mt: { xs: 5, md: 10 },
+                    mb: { xs: 5, md: 10 }
+                }}
                 noValidate
                 autoComplete="off"
-                marginTop={10}
             >
                 <Grid container spacing={2}>
                     <Grid item xs={12} alignItems={"center"}>
                         <Typography variant='h4' align='center'>Add new user</Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"username"}
@@ -94,7 +97,7 @@ const AddUser = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"password"}
@@ -109,7 +112,7 @@ const AddUser = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormGroup>
                             <TextField
                                 id={"email"}
@@ -124,7 +127,7 @@ const AddUser = () => {
                             />
                         </FormGroup>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} md={6}>
                         <FormControl fullWidth>
                             <InputLabel>Account type</InputLabel>
                             <Select
