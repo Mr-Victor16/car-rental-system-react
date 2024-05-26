@@ -38,19 +38,19 @@ _The proper functioning of the frontend requires the backend to be running._
 `npm start`
 
 ## Screenshots
-<kbd>![homePage](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/880a40a4-9b62-400e-a393-8c2f0c25f377)</kbd>
+<kbd>![homePage](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/b97fdf16-84b0-46a3-9e3d-ccde3b068a37)</kbd>
 _Homepage._<br /><br />
-<kbd>![register](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/ede33a1c-dcba-44fb-9529-b34a1dd3efad)</kbd>
+<kbd>![registrationForm](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/0424b3bb-9a63-4961-a337-b10a2718eb0b)</kbd>
 _Registration form._<br /><br />
-<kbd>![addCar](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/75fe3067-19c0-42b7-98ea-8afeabeb54a3)</kbd>
+<kbd>![carEditForm](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/64ba33e1-d5f9-483a-92b3-739b1d379166)</kbd>
 _Car edit form._<br /><br />
-<kbd>![showCarInfo](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/171378b4-56e9-479b-8598-1ade4cb41ae4)</kbd>
+<kbd>![showCarInfo](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/2f4186bc-4d1b-41b7-a579-ebc6db199480)</kbd>
 _Preview of car information._<br /><br />
-<kbd>![updateRentalStatus](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/30af8412-543d-4971-b1e9-160fde0b52ee)</kbd>
-_Preview of the rental list with status update dialog._
-<kbd></kbd>
-_Homepage (mobile view)._
-<kbd></kbd>
-_Main menu (mobile view)._
-<kbd></kbd>
-_User add form (mobile view)._
+<kbd>![updateRentalStatus](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/36ecb534-5868-4ba2-a620-6f93d55788f1)</kbd>
+_Preview of the rental list with status update dialog._<br /><br />
+<kbd>![homePage-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/2580ec2d-fee3-450f-bfa2-e9ff5c90fc2a)</kbd><br />
+_Homepage (mobile view)._<br /><br />
+<kbd>![mainMenu-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/6148d6fb-f75a-4fac-aef0-e360ffb02848)</kbd><br />
+_Main menu (mobile view)._<br /><br />
+<kbd>![userAddForm-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/048edc85-de82-4795-bc66-a2f04bfb5e8e)</kbd><br />
+_User add form (mobile view)._<br />
