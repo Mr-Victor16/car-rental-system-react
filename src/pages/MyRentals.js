@@ -64,7 +64,9 @@ const MyRentals = () => {
                                     </Grid>
                                 ))
                             ) : (
-                                <Typography variant="h6" align="center">No rentals to display</Typography>
+                                <Typography variant="h6" align="center" style={{marginTop: '50px', textAlign: 'center', display: 'block', width: '100%'}}>
+                                    No rentals to display
+                                </Typography>
                             )}
                         </Grid>
                     ) : (

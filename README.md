@@ -43,8 +43,14 @@ _Homepage._<br /><br />
 <kbd>![register](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/ede33a1c-dcba-44fb-9529-b34a1dd3efad)</kbd>
 _Registration form._<br /><br />
 <kbd>![addCar](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/75fe3067-19c0-42b7-98ea-8afeabeb54a3)</kbd>
-_New car addition form._<br /><br />
+_Car edit form._<br /><br />
 <kbd>![showCarInfo](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/171378b4-56e9-479b-8598-1ade4cb41ae4)</kbd>
 _Preview of car information._<br /><br />
 <kbd>![updateRentalStatus](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/30af8412-543d-4971-b1e9-160fde0b52ee)</kbd>
 _Preview of the rental list with status update dialog._
+<kbd></kbd>
+_Homepage (mobile view)._
+<kbd></kbd>
+_Main menu (mobile view)._
+<kbd></kbd>
+_User add form (mobile view)._
