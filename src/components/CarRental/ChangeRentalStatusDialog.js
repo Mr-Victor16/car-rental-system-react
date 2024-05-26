@@ -12,7 +12,7 @@ export default function ChangeRentalStatusDialog(props){
     const token = AuthHeader();
     const [openDialog, setOpenDialog] = useState(false);
     const [setRentals] = props.setRentals;
-    const [status, setStatus] = React.useState("");
+    const [status, setStatus] = useState("");
     const [statusList] = useState(props.statusList);
 
     const handleClickOpen = () => {

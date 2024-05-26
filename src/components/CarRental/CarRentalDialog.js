@@ -111,8 +111,7 @@ export default function CarRentalDialog(props){
             .then(async () => {
                 dispatch(showSnackbar("Rental date changed successfully", true));
                 handleCloseRentalDialog();
-                await delay(2000);
-                navigate('/');
+                props.updateRentalInList(rentalID, formik.values);
             })
             .catch((error) => {
                 console.log(error);

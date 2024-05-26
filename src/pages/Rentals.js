@@ -73,6 +73,10 @@ const Rentals = () => {
             })
     };
 
+    const updateRentalInList = (rentalID, updatedRental) => {
+        setRentals(prevRentals => prevRentals.map(rental => rental.id === rentalID ? { ...rental, startDate: updatedRental.startDate, endDate: updatedRental.endDate } : rental));
+    };
+
     return (
         <Container maxWidth="lg">
             <Box
@@ -116,6 +120,7 @@ const Rentals = () => {
                                                     endDate={rental.endDate}
                                                     price={rental.carPrice}
                                                     icon={<EditIcon fontSize="small" />}
+                                                    updateRentalInList={updateRentalInList}
                                                 />
                                                 &nbsp;
                                                 <Button
@@ -183,6 +188,7 @@ const Rentals = () => {
                                                     endDate={rental.endDate}
                                                     price={rental.carPrice}
                                                     icon={<EditIcon fontSize="small" />}
+                                                    updateRentalInList={updateRentalInList}
                                                 />
                                                 &nbsp;
                                                 <Button

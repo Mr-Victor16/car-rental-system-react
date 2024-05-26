@@ -75,7 +75,7 @@ const MyRentals = () => {
                                         <TableCell>#</TableCell>
                                         <TableCell align="center">Date created</TableCell>
                                         <TableCell align="center">Rental period</TableCell>
-                                        <TableCell align="center">Auto</TableCell>
+                                        <TableCell align="center">Car</TableCell>
                                         <TableCell align="center">Status</TableCell>
                                         <TableCell align="center">Cost</TableCell>
                                         <TableCell align="center">Details</TableCell>
