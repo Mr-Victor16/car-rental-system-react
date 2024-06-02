@@ -48,9 +48,9 @@ _Car edit form._<br /><br />
 _Preview of car information._<br /><br />
 <kbd>![updateRentalStatus](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/36ecb534-5868-4ba2-a620-6f93d55788f1)</kbd>
 _Preview of the rental list with status update dialog._<br /><br />
-<kbd>![homePage-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/2580ec2d-fee3-450f-bfa2-e9ff5c90fc2a)</kbd><br />
+<kbd>![homePage-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/6b18fbcc-8064-487b-b7fa-bdb956b87617)</kbd><br />
 _Homepage (mobile view)._<br /><br />
-<kbd>![mainMenu-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/6148d6fb-f75a-4fac-aef0-e360ffb02848)</kbd><br />
+<kbd>![mainMenu-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/c0a64f1a-64bd-4d00-8f70-af529f90af05)</kbd><br />
 _Main menu (mobile view)._<br /><br />
-<kbd>![userAddForm-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/048edc85-de82-4795-bc66-a2f04bfb5e8e)</kbd><br />
+<kbd>![userAddForm-mobile](https://github.com/Mr-Victor16/car-rental-system-react/assets/101965882/8a32caf8-3635-4e3c-b843-974508b81ca7)</kbd><br />
 _User add form (mobile view)._<br />
